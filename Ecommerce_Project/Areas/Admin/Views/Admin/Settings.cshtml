@@ -1,0 +1,51 @@
+﻿<link href="~/css/admin-theme.css" rel="stylesheet" />
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Sittings";
+    ViewData["PageTitle"] = "Settings";
+    ViewData["PageCrumb"] = "Admin / Settings";
+}
+<div id="page-settings" class="page-section">
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="lx-card mb-3">
+                <div class="lx-card-header"><div class="lx-card-title"><i class="bi bi-shop-window"></i>Store Settings</div></div>
+                <div class="lx-card-body">
+                    <div class="settings-section">
+                        <h6><i class="bi bi-info-circle-fill"></i>Store Info</h6>
+                        <div class="mb-3"><label class="form-label">Store Name</label><input class="form-control" value="Luxora Luxury Store" /></div>
+                        <div class="mb-3"><label class="form-label">Contact Email</label><input class="form-control" type="email" value="admin@luxora.com" /></div>
+                        <div class="mb-3"><label class="form-label">Phone</label><input class="form-control" value="+1 555 000 0000" /></div>
+                        <div class="mb-3">
+                            <label class="form-label">Currency</label>
+                            <select class="form-select"><option>USD — US Dollar</option><option>EUR — Euro</option><option>GBP — British Pound</option></select>
+                        </div>
+                        <div class="mb-3"><label class="form-label">Orders displayed per page</label><input class="form-control" type="number" value="20" /></div>
+                    </div>
+                    <button class="btn-lx-primary" onclick="toast('Settings saved successfully','success')"><i class="bi bi-check-lg"></i>Save Settings</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="lx-card mb-3">
+                <div class="lx-card-header"><div class="lx-card-title"><i class="bi bi-shield-lock-fill"></i>Security</div></div>
+                <div class="lx-card-body">
+                    <div class="settings-section">
+                        <h6><i class="bi bi-key-fill"></i>Change Password</h6>
+                        <div class="mb-3"><label class="form-label">Current Password</label><input class="form-control" type="password" placeholder="••••••••" /></div>
+                        <div class="mb-3"><label class="form-label">New Password</label><input class="form-control" type="password" placeholder="••••••••" /></div>
+                        <div class="mb-3"><label class="form-label">Confirm New Password</label><input class="form-control" type="password" placeholder="••••••••" /></div>
+                    </div>
+                    <div class="settings-section">
+                        <h6><i class="bi bi-phone-fill"></i>Two-Factor Authentication</h6>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="2fa-toggle" />
+                            <label class="form-check-label" for="2fa-toggle" style="font-size:13px;color:var(--text)">Enable 2FA via Authenticator App</label>
+                        </div>
+                    </div>
+                    <button class="btn-lx-primary" onclick="toast('Security settings updated','success')"><i class="bi bi-shield-check"></i>Update Security</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

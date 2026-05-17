@@ -1,0 +1,187 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.Testimonial>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Testimonials Vault";
+}
+
+@* Metrics Overview *@
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-gold"><i class="bi bi-chat-square-quote-fill"></i></div>
+            <div>
+                <div class="stat-num">@Model.Count()</div>
+                <div class="stat-lbl">Total Quotes</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-green"><i class="bi bi-patch-check-fill"></i></div>
+            <div>
+                <div class="stat-num">@Model.Count(t => t.IsApproved)</div>
+                <div class="stat-lbl">Live on App</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-red"><i class="bi bi-hourglass-split"></i></div>
+            <div>
+                <div class="stat-num">@Model.Count(t => !t.IsApproved)</div>
+                <div class="stat-lbl">Pending Review</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Testimonials Queue *@
+<div class="lx-card shadow-sm border-0">
+    <div class="lx-card-header">
+        <div class="lx-card-title">
+            <i class="bi bi-quote" style="color:var(--gold); font-size:22px;"></i>
+            User Testimonials Moderation
+        </div>
+        <div class="d-flex gap-2 align-items-center ms-auto">
+            <a asp-area="Admin" asp-controller="Testimonials" asp-action="Archive" class="btn-lx-outline text-danger border-danger">
+                <i class="bi bi-trash3-fill me-1"></i> View Trash Archive
+            </a>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="lx-table" id="testimonials-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">User Account</th>
+                    <th style="width: 50%;">Testimonial Message</th>
+                    <th style="width: 15%;">State</th>
+                    <th style="width: 10%; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted p-4">No data streams currently registered.</td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr id="testimonial-row-@item.Id"
+                        data-search="@item.User?.FullName @item.User?.Email @item.Message">
+                        <td>
+                            <div class="fw-bold" style="color:var(--text);">@(item.User?.FullName ?? "Anonymous User")</div>
+                            <div style="font-size:11px; color:var(--muted);">@item.User?.Email</div>
+                        </td>
+                        <td>
+                            <div style="font-size:13px; font-style: italic; color:var(--text-light); line-height: 1.5;">
+                                "@item.Message"
+                            </div>
+                            <div style="font-size:11px; color:var(--muted); margin-top: 4px;">
+                                <i class="bi bi-calendar-event me-1"></i>Posted: @item.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+                        </td>
+                        <td>
+                            <span id="badge-@item.Id" class="lx-badge @(item.IsApproved ? "b-success" : "b-warning")">
+                                <i class="bi @(item.IsApproved ? "bi-check-circle-fill" : "bi-hourglass-split")"></i>
+                                @(item.IsApproved ? "Approved" : "Pending")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn-icon view" id="btn-toggle-@item.Id" onclick="toggleTestimonialApproval(@item.Id)" title="Toggle Visibility">
+                                    <i class="bi @(item.IsApproved ? "bi-shield-x" : "bi-shield-check")"></i>
+                                </button>
+                                <button type="button" class="btn-icon del" onclick="softDeleteTestimonial(@item.Id, this)" title="Soft Delete">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        /* ── Asynchronous Approval Toggle ─────────────────── */
+        async function toggleTestimonialApproval(id) {
+            try {
+                const response = await fetch(`/Admin/Testimonials/ToggleApproval?id=${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? ''
+                    }
+                });
+
+                if (!response.ok) throw new Error('Network fault');
+                const data = await response.json();
+
+                if (data.success) {
+                    const badge = document.getElementById(`badge-${id}`);
+                    const button = document.getElementById(`btn-toggle-${id}`);
+
+                    if (data.approved) {
+                        badge.className = 'lx-badge b-success';
+                        badge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Approved';
+                        button.setAttribute('title', 'Revoke Visibility');
+                        button.querySelector('i').className = 'bi bi-shield-x';
+                        if (typeof notify === "function") notify('success', 'Moderation Vault', 'Testimonial is now live.');
+                    } else {
+                        badge.className = 'lx-badge b-warning';
+                        badge.innerHTML = '<i class="bi bi-hourglass-split"></i> Pending';
+                        button.setAttribute('title', 'Publish Live');
+                        button.querySelector('i').className = 'bi bi-shield-check';
+                        if (typeof notify === "function") notify('warning', 'Moderation Vault', 'Testimonial hidden offline.');
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'Failed to adjust system status configuration.', 'error');
+            }
+        }
+
+        /* ── Asynchronous Soft Delete Execution ────────────── */
+        async function softDeleteTestimonial(id, element) {
+            const result = await Swal.fire({
+                title: 'Archive Quote?',
+                text: "This handles a soft-delete, moving this statement to the system backups.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#004225',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Archive'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/Admin/Testimonials/SoftDelete?id=${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? ''
+                        }
+                    });
+
+                    if (!response.ok) throw new Error('Action dropped');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const row = element.closest('tr');
+                        row.style.transition = "all 0.4s ease";
+                        row.style.opacity = "0";
+                        row.style.transform = "scale(0.95)";
+
+                        setTimeout(() => row.remove(), 400);
+                        if (typeof notify === "function") notify('success', 'System Executed', 'Testimonial cleared.');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'Could not soft delete this testimonial.', 'error');
+                }
+            }
+        }
+    </script>
+}

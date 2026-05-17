@@ -1,0 +1,117 @@
+﻿@model Ecommerce_Project.Models.Discount
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create Campaign";
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="btn-lx-outline btn-sm">
+        <i class="bi bi-arrow-left"></i> Back to Campaigns Vault
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-8">
+        @* Main Luxury Form Card *@
+        <div class="lx-card shadow-sm border-0">
+            <div class="lx-card-header">
+                <div class="lx-card-title text-white">
+                    <i class="bi bi-tag-fill" style="color:var(--gold);"></i>
+                    Forge New Promotional Campaign
+                </div>
+            </div>
+
+            <div class="card-body p-4" style="background: var(--green-darker);">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+                        @* Title *@
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label asp-for="Title" class="control-label text-gold small fw-bold mb-1">Campaign Title</label>
+                                <input asp-for="Title" class="form-control lx-input" placeholder="e.g., Ramadan Elite Suite" />
+                                <span asp-validation-for="Title" class="text-danger standard-error"></span>
+                            </div>
+                        </div>
+
+                        @* Target Product Selector *@
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label asp-for="ProductId" class="control-label text-gold small fw-bold mb-1">Target Luxury Asset</label>
+                                <select asp-for="ProductId" class="form-select lx-input" asp-items="ViewBag.ProductId">
+                                    <option value="">-- Apply Storewide (No Specific Product) --</option>
+                                </select>
+                                <span asp-validation-for="ProductId" class="text-danger standard-error"></span>
+                            </div>
+                        </div>
+
+                        @* Percentage Value *@
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Percentage" class="control-label text-gold small fw-bold mb-1">Discount Rate (%)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text lx-input-addon"><i class="bi bi-percent"></i></span>
+                                    <input asp-for="Percentage" class="form-control lx-input" type="number" min="1" max="100" placeholder="15" />
+                                </div>
+                                <span asp-validation-for="Percentage" class="text-danger standard-error"></span>
+                            </div>
+                        </div>
+
+                        @* Validity Window Dates *@
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="StartDate" class="control-label text-gold small fw-bold mb-1">Activation Date</label>
+                                <input asp-for="StartDate" type="date" class="form-control lx-input" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="StartDate" class="text-danger standard-error"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="EndDate" class="control-label text-gold small fw-bold mb-1">Termination Date</label>
+                                <input asp-for="EndDate" type="date" class="form-control lx-input" value="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="EndDate" class="text-danger standard-error"></span>
+                            </div>
+                        </div>
+
+                        @* Minimum Order Amount Requirements *@
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label asp-for="MinmumAmount" class="control-label text-gold small fw-bold mb-1">Minimum Order Volume Criteria</label>
+                                <div class="input-group">
+                                    <span class="input-group-text lx-input-addon">$</span>
+                                    <input asp-for="MinmumAmount" class="form-control lx-input" type="number" step="0.01" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="MinmumAmount" class="text-danger standard-error"></span>
+                            </div>
+                        </div>
+
+                        @* Active Switch Toggle Status *@
+                        <div class="col-md-4 d-flex align-items-center mt-4">
+                            <div class="form-check form-switch lx-switch-wrapper">
+                                <input class="form-check-input lx-switch" type="checkbox" asp-for="IsActive" checked />
+                                <label class="form-check-label text-white ms-2" asp-for="IsActive">Launch Immediately</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Submission Trigger Buttons *@
+                    <div class="d-flex gap-2 justify-content-end mt-4 pt-3" style="border-top: 1px solid var(--border);">
+                        <a asp-action="Index" class="btn-lx-outline">Cancel</a>
+                        <button type="submit" class="btn-lx-primary">
+                            <i class="bi bi-shield-lock-fill me-1"></i> Register Campaign
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

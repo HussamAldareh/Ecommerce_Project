@@ -1,0 +1,172 @@
+﻿@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "My Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<style>
+
+    body {
+        background: #081c15;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .profile-wrapper {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 15px;
+    }
+
+    .profile-card {
+        background: #10271f;
+        border-radius: 30px;
+        padding: 50px;
+        width: 100%;
+        max-width: 650px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        border: 1px solid rgba(212,175,55,0.15);
+    }
+
+    .profile-title {
+        color: #d4af37;
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .profile-subtitle {
+        color: #cfcfcf;
+        margin-bottom: 35px;
+    }
+
+    .form-control {
+        background: #081c15;
+        border: 1px solid rgba(212,175,55,0.2);
+        color: white;
+        border-radius: 15px;
+        height: 58px;
+    }
+
+        .form-control:focus {
+            background: #081c15;
+            color: white;
+            border-color: #d4af37;
+            box-shadow: none;
+        }
+
+    .form-floating label {
+        color: #aaa;
+    }
+
+    .save-btn {
+        background: #d4af37;
+        color: #081c15;
+        border: none;
+        border-radius: 50px;
+        height: 55px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .save-btn:hover {
+            background: #004225;
+            color: white;
+        }
+
+    .text-danger {
+        color: #ffb3b3 !important;
+    }
+
+    .text-success {
+        color: #d4af37 !important;
+    }
+
+</style>
+
+<div class="profile-wrapper">
+
+    <div class="profile-card">
+
+        <h1 class="profile-title">
+            My Profile
+        </h1>
+
+        <p class="profile-subtitle">
+            Manage your account information
+        </p>
+
+        <partial name="_StatusMessage"
+                 for="StatusMessage" />
+
+        <form id="profile-form"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Username"
+                       class="form-control"
+                       disabled />
+
+                <label asp-for="Username">
+                    Email
+                </label>
+
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Input.FullName"
+                       class="form-control"
+                       placeholder="Full Name" />
+
+                <label asp-for="Input.FullName">
+                    Full Name
+                </label>
+
+                <span asp-validation-for="Input.FullName"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Input.PhoneNumber"
+                       class="form-control"
+                       placeholder="Phone Number" />
+
+                <label asp-for="Input.PhoneNumber">
+                    Phone Number
+                </label>
+
+                <span asp-validation-for="Input.PhoneNumber"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <button id="update-profile-button"
+                    type="submit"
+                    class="w-100 save-btn">
+
+                Save Changes
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

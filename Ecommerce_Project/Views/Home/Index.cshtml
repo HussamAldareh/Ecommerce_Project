@@ -1,0 +1,549 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.Product>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<style>
+
+    body {
+        background: #081c15;
+        color: white;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    /* NAVBAR */
+
+    .lux-navbar {
+        background: rgba(8, 28, 21, 0.95);
+        border-bottom: 1px solid rgba(212,175,55,0.15);
+        padding: 18px 0;
+    }
+
+    .brand-logo {
+        font-size: 34px;
+        font-weight: bold;
+        color: #d4af37;
+        letter-spacing: 3px;
+    }
+
+    .nav-link-custom {
+        color: white;
+        margin-left: 25px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .nav-link-custom:hover {
+            color: #d4af37;
+        }
+
+    .cart-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #d4af37;
+        color: #081c15;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        transition: 0.3s;
+    }
+
+        .cart-btn:hover {
+            background: #004225;
+            color: white;
+        }
+
+    /* HERO */
+
+    .hero-section {
+        min-height: 92vh;
+        background: linear-gradient(to right, rgba(8,28,21,0.92), rgba(8,28,21,0.45)), url('/images/hero.jpg');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        padding: 90px;
+    }
+
+    .hero-subtitle {
+        color: #d4af37;
+        letter-spacing: 4px;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .hero-title {
+        font-size: 90px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .hero-text {
+        margin-top: 25px;
+        color: #cfcfcf;
+        font-size: 20px;
+        max-width: 600px;
+    }
+
+    .hero-btn {
+        margin-top: 35px;
+        background: #d4af37;
+        color: #081c15;
+        padding: 15px 45px;
+        border-radius: 50px;
+        font-weight: bold;
+        transition: 0.3s;
+        display: inline-block;
+    }
+
+        .hero-btn:hover {
+            background: #004225;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+    /* SECTION */
+
+    .section-title {
+        font-size: 50px;
+        font-weight: bold;
+        margin-bottom: 50px;
+        text-align: center;
+        color: #d4af37;
+    }
+
+    /* CATEGORY */
+
+    .category-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 25px;
+        height: 420px;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+        .category-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .category-card:hover img {
+            transform: scale(1.1);
+        }
+
+    .category-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(8,28,21,0.95), rgba(8,28,21,0.15));
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        padding: 35px;
+    }
+
+        .category-overlay h2 {
+            font-size: 38px;
+            font-weight: bold;
+            color: #d4af37;
+        }
+
+    /* PRODUCT CARD */
+
+    .product-card {
+        background: #10271f;
+        border-radius: 24px;
+        overflow: hidden;
+        transition: 0.35s;
+        border: 1px solid rgba(212,175,55,0.15);
+        height: 100%;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+    }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-card img {
+            height: 320px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+    .product-content {
+        padding: 25px;
+    }
+
+    .product-name {
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .product-description {
+        color: #cfcfcf;
+        min-height: 50px;
+    }
+
+    .product-price {
+        color: #d4af37;
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .view-btn {
+        background: #d4af37;
+        color: #081c15;
+        border-radius: 50px;
+        padding: 10px 22px;
+        font-weight: bold;
+        transition: 0.3s;
+        border: none;
+    }
+
+        .view-btn:hover {
+            background: #004225;
+            color: white;
+        }
+
+    footer {
+        margin-top: 120px;
+        background: #04110d;
+        padding: 70px 0;
+    }
+
+</style>
+
+<!-- NAVBAR -->
+
+<!-- HERO -->
+
+<section class="hero-section">
+
+    <div>
+
+        <p class="hero-subtitle">
+            LUXURY COLLECTION
+        </p>
+
+        <h1 class="hero-title">
+            Timeless <br />
+            Elegance
+        </h1>
+
+        <p class="hero-text">
+            Discover luxury watches and handbags
+            crafted for premium lifestyle and elegance.
+        </p>
+
+        <a href="#products"
+           class="hero-btn">
+            SHOP NOW
+        </a>
+
+    </div>
+
+</section>
+
+<!-- CATEGORIES -->
+
+<section class="container mt-5">
+
+    <h2 class="section-title">
+        Featured Categories
+    </h2>
+
+    <div class="row g-4">
+
+        <!-- Watch -->
+
+        <div class="col-md-6">
+
+            <a asp-controller="Products"
+               asp-action="ByCategory"
+               asp-route-id="2">
+
+                <div class="category-card">
+
+                    <img src="/images/products/fd4ae1af-b484-4ffd-a395-46f9cc5e179e.jpeg" />
+
+                    <div class="category-overlay">
+
+                        <h2>
+                            Luxury Watch
+                        </h2>
+
+                        <p>
+                            Crafted for luxury lifestyle
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        <!-- Bags -->
+
+        <div class="col-md-6">
+
+            <a asp-controller="Products"
+               asp-action="ByCategory"
+               asp-route-id="3">
+
+                <div class="category-card">
+
+                    <img src="/images/products/1963e7cc-88d6-4ed9-bbfa-ce2e7a962ad9.jpg" />
+
+                    <div class="category-overlay">
+
+                        <h2>
+                            Elegant Bags
+                        </h2>
+
+                        <p>
+                            Explore premium timepieces
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="col-md-12" >
+
+        <a asp-controller="Products"
+           asp-action="Offers">
+
+            <div class="category-card"
+                 style="height:300px;">
+
+                <img src="/images/Gemini_Generated_Image_emcby5emcby5emcb.png" />
+
+                <div class="category-overlay">
+
+                    <h2>
+                        Exclusive Offers
+                    </h2>
+
+                    <p>
+                        Discover premium discounts
+                    </p>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+
+
+
+
+
+</section>
+
+<!-- PRODUCTS -->
+
+<section class="container mt-5"
+         id="products">
+
+    <h2 class="section-title">
+        New Arrivals
+    </h2>
+
+    <div class="row g-4">
+
+        @foreach (var item in Model.Take(8))
+        {
+            var firstImage = item.ProductImages?.FirstOrDefault();
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+
+                <div class="product-card">
+
+                    @if (firstImage != null)
+                    {
+                        <img src="@firstImage.ImageUrl" />
+                    }
+                    else
+                    {
+                        <img src="/images/no-image.png" />
+                    }
+
+                <div class="product-content">
+
+                    <h5 class="product-name">
+                        @item.Name
+                    </h5>
+
+                    <p class="product-description">
+
+                        @(item.Description.Length > 60
+                                                ? item.Description.Substring(0, 60) + "..."
+                                                : item.Description)
+
+                    </p>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+
+                            <span class="product-price">
+                                @item.Price JD
+                            </span>
+
+                            <a asp-controller="Products"
+                               asp-action="Details"
+                               asp-route-id="@item.Id"
+                               class="view-btn">
+                                View
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+                }
+
+    </div>
+
+</section>
+
+
+
+@using Ecommerce_Project.Models
+
+@{
+    var testimonials = ViewBag.Testimonials as List<Testimonial>;
+}
+
+@if (testimonials != null && testimonials.Any())
+{
+    <section class="container mt-5">
+
+        <h2 class="section-title">
+            What Our Clients Say
+        </h2>
+
+        <div class="row g-4">
+
+            @foreach (var item in testimonials)
+            {
+                <div class="col-md-4">
+
+                    <div class="product-card p-4 h-100">
+
+                        <div class="d-flex align-items-center mb-3">
+
+                            <div style="
+                                        width:60px;
+                                        height:60px;
+                                        border-radius:50%;
+                                        background:#d4af37;
+                                        color:#081c15;
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        font-size:24px;
+                                        font-weight:bold;">
+
+                                @item.User.UserName.Substring(0, 1).ToUpper()
+
+                            </div>
+
+                            <div class="ms-3">
+
+                                <h5 class="mb-0 text-white fw-bold">
+                                    @item.User.FullName
+                                </h5>
+
+                                <small class="text-warning">
+                                    Verified Customer
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <p class="text-light mb-0"
+                           style="line-height:1.8;">
+                            "@item.Message"
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+}
+
+
+
+@if (User.Identity.IsAuthenticated)
+{
+    <section class="container mt-5">
+
+        <div class="product-card p-5">
+
+            <h2 class="section-title mb-4">
+                Share Your Experience
+            </h2>
+
+            <form asp-controller="Testimonials"
+                  asp-action="Create"
+                  method="post">
+
+                <textarea name="Message"
+                          class="form-control mb-4"
+                          rows="5"
+                          placeholder="Write your opinion about our website..."
+                          style="
+                              background:#081c15;
+                              border:1px solid rgba(212,175,55,0.2);
+                              color:white;
+                              border-radius:20px;
+                              padding:20px;"></textarea>
+
+                <button type="submit"
+                        class="view-btn">
+                    Submit Review
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+}
+
+
+
+
+
+<!-- FOOTER -->
+

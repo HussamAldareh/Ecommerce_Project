@@ -1,0 +1,21 @@
+﻿@model Ecommerce_Project.Models.Category
+@{
+    Layout = "_AdminLayout";
+    ViewData["PageTitle"] = "Delete Category";
+}
+
+<div class="page-section active">
+    <div class="lx-card border-danger col-lg-6 mx-auto">
+        <div class="lx-card-body text-center py-5">
+            <div class="mb-3" style="font-size:40px; color:var(--danger)"><i class="bi bi-exclamation-octagon"></i></div>
+            <h4>Delete <strong>@Model.Name</strong>?</h4>
+            <p class="text-muted small">Warning: Deleting this category may affect products assigned to it.</p>
+
+            <form asp-area="Admin" asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn-lx-danger px-4">Confirm Delete</button>
+                <a asp-area="Admin" asp-action="Index" class="btn-lx-outline">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

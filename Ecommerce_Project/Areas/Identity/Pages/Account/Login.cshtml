@@ -1,0 +1,204 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<style>
+
+    body {
+        background: #081c15;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .login-wrapper {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 15px;
+    }
+
+    .login-card {
+        background: #10271f;
+        border-radius: 30px;
+        padding: 50px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        border: 1px solid rgba(212,175,55,0.15);
+    }
+
+    .login-title {
+        color: #d4af37;
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .login-subtitle {
+        color: #cfcfcf;
+        margin-bottom: 35px;
+    }
+
+    .form-control {
+        background: #081c15;
+        border: 1px solid rgba(212,175,55,0.2);
+        color: white;
+        border-radius: 15px;
+        height: 58px;
+    }
+
+        .form-control:focus {
+            background: #081c15;
+            color: white;
+            border-color: #d4af37;
+            box-shadow: none;
+        }
+
+    .form-floating label {
+        color: #aaa;
+    }
+
+    .login-btn {
+        background: #d4af37;
+        color: #081c15;
+        border: none;
+        border-radius: 50px;
+        height: 55px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .login-btn:hover {
+            background: #004225;
+            color: white;
+        }
+
+    .custom-link {
+        color: #d4af37;
+        text-decoration: none;
+    }
+
+        .custom-link:hover {
+            color: white;
+        }
+
+    .form-check-label,
+    .text-danger {
+        color: white;
+    }
+
+</style>
+
+<div class="login-wrapper">
+
+    <div class="login-card">
+
+        <h1 class="login-title">
+            Welcome Back
+        </h1>
+
+        <p class="login-subtitle">
+            Login to your luxury account
+        </p>
+
+        <form id="account" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Input.Email"
+                       class="form-control"
+                       autocomplete="username"
+                       placeholder="name@example.com" />
+
+                <label asp-for="Input.Email">
+                    Email
+                </label>
+
+                <span asp-validation-for="Input.Email"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Input.Password"
+                       class="form-control"
+                       autocomplete="current-password"
+                       placeholder="password" />
+
+                <label asp-for="Input.Password">
+                    Password
+                </label>
+
+                <span asp-validation-for="Input.Password"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="form-check mb-4">
+
+                <input class="form-check-input"
+                       asp-for="Input.RememberMe" />
+
+                <label class="form-check-label"
+                       asp-for="Input.RememberMe">
+
+                    Remember Me
+
+                </label>
+
+            </div>
+
+            <button id="login-submit"
+                    type="submit"
+                    class="w-100 login-btn">
+
+                Login
+
+            </button>
+
+            <div class="mt-4 text-center">
+
+                <p>
+                    <a class="custom-link"
+                       asp-page="./ForgotPassword">
+
+                        Forgot your password?
+
+                    </a>
+                </p>
+
+                <p>
+
+                    Don't have an account?
+
+                    <a class="custom-link"
+                       asp-page="./Register"
+                       asp-route-returnUrl="@Model.ReturnUrl">
+
+                        Register
+
+                    </a>
+
+                </p>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

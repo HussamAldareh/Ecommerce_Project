@@ -1,0 +1,231 @@
+﻿```cshtml
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - LUXORA Admin</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+    <!-- Admin Theme -->
+    <link rel="stylesheet" href="@Url.Content("~/css/admin-theme.css")" />
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <nav id="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">LX</div>
+
+            <div>
+                <div class="brand-name">LUXORA</div>
+                <div class="brand-sub">Admin Panel</div>
+            </div>
+
+        </div>
+
+        <div class="sidebar-nav">
+
+            <!-- Overview -->
+            <div class="nav-group-label">Overview</div>
+
+            <a asp-area="Admin"
+               asp-controller="Admin"
+               asp-action="Index"
+               class="nav-link-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" ? "active" : "")">
+
+                <i class="bi bi-grid-1x2-fill"></i>
+                Dashboard
+            </a>
+
+            <!-- Catalogue -->
+            <div class="nav-group-label">Catalogue</div>
+
+            <a asp-area="Admin"
+               asp-controller="Products"
+               asp-action="Index"
+               class="nav-link-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Products" ? "active" : "")">
+
+                <i class="bi bi-box-seam-fill"></i>
+                Products
+            </a>
+
+            <a asp-area="Admin"
+               asp-controller="Categories"
+               asp-action="Index"
+               class="nav-link-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Categories" ? "active" : "")">
+
+                <i class="bi bi-tags-fill"></i>
+                Categories
+            </a>
+
+            <!-- Commerce -->
+            <div class="nav-group-label">Commerce</div>
+
+            <a asp-area="Admin"
+               asp-controller="Orders"
+               asp-action="Index"
+               class="nav-link-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" ? "active" : "")">
+
+                <i class="bi bi-receipt-cutoff"></i>
+                Orders
+            </a>
+
+            <a asp-area="Admin"
+               asp-controller="Users"
+               asp-action="Index"
+               class="nav-link-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
+
+                <i class="bi bi-people-fill"></i>
+                Users
+            </a>
+
+            <!-- Moderation -->
+            <div class="nav-group-label">Moderation</div>
+
+            <a asp-area="Admin"
+               asp-controller="Testimonials"
+               asp-action="Index"
+               class="nav-link-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Testimonials" ? "active" : "")">
+
+                <i class="bi bi-chat-quote-fill"></i>
+                Testimonials
+            </a>
+
+            <a asp-area="Admin"
+               asp-controller="ProductComments"
+               asp-action="Index"
+               class="nav-link-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ProductComments" ? "active" : "")">
+
+                <i class="bi bi-star-half"></i>
+                Reviews
+            </a>
+
+            <!-- Marketing -->
+            <div class="nav-group-label">Marketing</div>
+
+            <a asp-area="Admin"
+               asp-controller="Discounts"
+               asp-action="Index"
+               class="nav-link-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Discounts" ? "active" : "")">
+
+                <i class="bi bi-percent"></i>
+                Discounts & Offers
+            </a>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="sidebar-footer">
+
+            <div class="s-avatar">SA</div>
+
+            <div>
+                <div class="s-name">Super Admin</div>
+                <div class="s-role">Administrator</div>
+            </div>
+
+            <button class="s-logout"
+                    onclick="notify('info','Logout','Logged out successfully')"
+                    title="Logout">
+
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+
+        </div>
+
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <button class="sidebar-toggle"
+                    onclick="document.getElementById('sidebar').classList.toggle('open')">
+
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div>
+                <div class="topbar-title">
+                    @ViewData["Title"]
+                </div>
+
+                <div class="topbar-crumb">
+                    Admin / @ViewData["Title"]
+                </div>
+            </div>
+
+            <div class="topbar-search">
+
+                <i class="bi bi-search" style="color:var(--gold)"></i>
+
+                <input type="text"
+                       placeholder="Search the vault..."
+                       id="global-vault-search"
+                       oninput="vaultSearch(this.value)" />
+
+            </div>
+
+        </div>
+
+        <!-- PAGE BODY -->
+        <main role="main" class="page-section active">
+
+            @RenderBody()
+
+        </main>
+
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Admin JS -->
+    <script src="@Url.Content("~/js/admin.js")"></script>
+
+    <!-- Notifications -->
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var message = '@Html.Raw(TempData["Notification"])';
+            var type = '@TempData["NotificationType"]';
+
+            if (message && message.trim() !== "") {
+
+                if (typeof notify === "function") {
+
+                    notify(
+                        type || 'success',
+                        'LUXORA System',
+                        message
+                    );
+
+                }
+            }
+        });
+
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
+```

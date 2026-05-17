@@ -1,0 +1,158 @@
+﻿@model Ecommerce_Project.Models.Product
+
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="card shadow border-0 rounded-4">
+
+                <div class="card-body p-5">
+
+                    <div class="text-center mb-4">
+
+                        <h1 class="text-danger fw-bold">
+                            Delete Product
+                        </h1>
+
+                        <p class="text-muted">
+                            Are you sure you want to permanently delete this product?
+                        </p>
+
+                    </div>
+
+                    <hr />
+
+                    <!-- Product Image -->
+                    <div class="text-center mb-4">
+
+                        @if (Model.ProductImages != null &&
+                                                Model.ProductImages.Any())
+                        {
+                            <img src="@Model.ProductImages.First().ImageUrl"
+                                 style="
+                                        width:220px;
+                                        height:220px;
+                                        object-fit:cover;
+                                        border-radius:20px;
+                                        border:1px solid #ddd;"
+                                 class="shadow-sm" />
+                        }
+                        else
+                        {
+                            <img src="/images/no-image.png"
+                                 style="
+                                        width:220px;
+                                        height:220px;
+                                        object-fit:cover;
+                                        border-radius:20px;"
+                                 class="shadow-sm" />
+                        }
+
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="mb-4">
+
+                        <h2 class="fw-bold">
+                            @Model.Name
+                        </h2>
+
+                        <p class="text-muted">
+                            @Model.Description
+                        </p>
+
+                    </div>
+
+                    <div class="row mb-4">
+
+                        <div class="col-md-6">
+
+                            <div class="border rounded-3 p-3">
+
+                                <small class="text-muted d-block">
+                                    Price
+                                </small>
+
+                                <h5 class="fw-bold text-success">
+                                    @Model.Price.ToString("0.00") JD
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="border rounded-3 p-3">
+
+                                <small class="text-muted d-block">
+                                    Stock Quantity
+                                </small>
+
+                                <h5 class="fw-bold">
+                                    @Model.StockQuantity
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <span class="badge bg-dark p-2">
+                            @Model.Category?.Name
+                        </span>
+
+                        @if (Model.IsAvailable)
+                        {
+                            <span class="badge bg-success p-2 ms-2">
+                                Available
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger p-2 ms-2">
+                                Not Available
+                            </span>
+                        }
+
+                    </div>
+
+                    <!-- Buttons -->
+                    <form asp-action="Delete">
+
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="d-flex gap-3">
+
+                            <button type="submit"
+                                    class="btn btn-danger px-4">
+                                Delete Product
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary px-4">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

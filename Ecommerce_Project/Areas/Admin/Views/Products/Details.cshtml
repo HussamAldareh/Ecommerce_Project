@@ -1,0 +1,30 @@
+﻿@model Ecommerce_Project.Models.Product
+@{
+    Layout = "_AdminLayout";
+    ViewData["PageTitle"] = "Product Details";
+}
+
+<div class="page-section active">
+    <div class="lx-card">
+        <div class="lx-card-body text-white">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="img-preview-grid">
+                        @foreach (var img in Model.ProductImages)
+                        {
+                            <img src="@img.ImageUrl" class="img-prev" style="width:100px; height:100px" />
+                        }
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <h2 class="fw-bold">@Model.Name</h2>
+                    <span class="lx-badge b-gold mb-3">@Model.Category?.Name</span>
+                    <p class="text-muted" style="color: var(--text) !important">@Model.Description</p>
+                    <h3 style="color:var(--text)">@Model.Price.ToString("C")</h3>
+                    <hr />
+                    <a asp-area="Admin" asp-action="Edit" asp-route-id="@Model.Id" class="btn-lx-gold">Edit Product</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

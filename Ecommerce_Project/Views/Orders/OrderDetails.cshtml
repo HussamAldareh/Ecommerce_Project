@@ -1,0 +1,90 @@
+﻿@model Ecommerce_Project.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-5">
+
+    <h2 class="text-success fw-bold mb-4">
+        Order Details
+    </h2>
+
+    <div class="card shadow-sm border-0 p-4">
+
+        <div class="mb-4">
+
+            <h4 class="fw-bold">
+                Order #@Model.Id
+            </h4>
+
+            <p>
+                <strong>Status:</strong>
+
+                <span class="badge bg-success">
+                    @Model.Status
+                </span>
+            </p>
+
+            <p>
+                <strong>Order Date:</strong>
+                @Model.OrderDate
+            </p>
+
+            <p>
+                <strong>Total:</strong>
+
+                <span class="text-success fw-bold">
+                    @Model.TotalAmount JD
+                </span>
+            </p>
+
+        </div>
+
+        <hr />
+
+        <h4 class="mb-4">
+            Products
+        </h4>
+
+        @foreach (var item in Model.OrderItems)
+        {
+            <div class="card mb-3 border-0 shadow-sm">
+
+                <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+
+                    <div>
+
+                        <h5 class="fw-bold">
+                            @item.Product.Name
+                        </h5>
+
+                        <p class="mb-1 text-muted">
+                            Price: @item.Price JD
+                        </p>
+
+                        <p class="mb-0">
+                            Quantity:
+                            <span class="fw-bold">
+                                @item.Quantity
+                            </span>
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="text-success fw-bold">
+                            @(item.Price* item.Quantity) JD
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

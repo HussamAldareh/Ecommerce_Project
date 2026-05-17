@@ -1,0 +1,205 @@
+﻿@model Ecommerce_Project.Models.Cart
+
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap">
+
+        <div>
+            <h1 class="fw-bold display-6 mb-1">
+                Shopping Cart
+            </h1>
+
+            <p class="text-muted mb-0">
+                Your selected luxury products
+            </p>
+        </div>
+
+        <a asp-controller="Products"
+           asp-action="Index"
+           class="btn btn-outline-dark rounded-pill px-4">
+            Continue Shopping
+        </a>
+
+    </div>
+
+    @if (Model == null || Model.CartItems == null || !Model.CartItems.Any())
+    {
+        <div class="text-center py-5">
+
+            <img src="/images/empty-cart.png"
+                 style="width:180px;"
+                 class="mb-4" />
+
+            <h3 class="fw-bold">
+                Your cart is empty
+            </h3>
+
+            <p class="text-muted">
+                يبدو إنك جاي تتفرج بس 😅
+            </p>
+
+            <a asp-controller="Products"
+               asp-action="Index"
+               class="btn btn-dark px-4 rounded-pill">
+                Start Shopping
+            </a>
+
+        </div>
+    }
+    else
+    {
+        decimal total = 0;
+
+        <div class="row">
+
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+
+                @foreach (var item in Model.CartItems)
+                {
+                    var subtotal = item.Quantity * item.Product.Price;
+
+                    total += subtotal;
+
+                    var image = item.Product.ProductImages?
+                    .FirstOrDefault()?.ImageUrl ?? "/images/no-image.png";
+
+                    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+
+                        <div class="card-body p-4">
+
+                            <div class="row align-items-center">
+
+                                <!-- Product Image -->
+                                <div class="col-md-3 text-center mb-3 mb-md-0">
+
+                                    <img src="@image"
+                                         class="img-fluid rounded-4"
+                                         style="height:140px;
+                                                        width:140px;
+                                                        object-fit:cover;" />
+
+                                </div>
+
+                                <!-- Product Info -->
+                                <div class="col-md-5">
+
+                                    <h4 class="fw-bold mb-2">
+                                        @item.Product.Name
+                                    </h4>
+
+                                    <p class="text-muted mb-2">
+                                        @item.Product.Description
+                                    </p>
+
+                                    <h5 class="text-success fw-bold">
+                                        @item.Product.Price JD
+                                    </h5>
+
+                                </div>
+
+                                <!-- Quantity -->
+                                <div class="col-md-2 text-center mt-3 mt-md-0">
+
+                                    <div class="d-flex justify-content-center align-items-center gap-2">
+
+                                        <a asp-action="DecreaseQuantity"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-outline-dark rounded-circle"
+                                           style="width:38px; height:38px;">
+                                            -
+                                        </a>
+
+                                        <span class="fw-bold fs-5">
+                                            @item.Quantity
+                                        </span>
+
+                                        <a asp-action="IncreaseQuantity"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-dark rounded-circle"
+                                           style="width:38px; height:38px;">
+                                            +
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- Total -->
+                                <div class="col-md-2 text-center mt-3 mt-md-0">
+
+                                    <h5 class="fw-bold text-success mb-3">
+                                        @subtotal JD
+                                    </h5>
+
+                                    <a asp-action="RemoveFromCart"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-danger btn-sm rounded-pill px-3">
+                                        Remove
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+            <!-- Summary -->
+            <div class="col-lg-4">
+
+                <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top"
+                     style="top:100px;">
+
+                    <h3 class="fw-bold mb-4">
+                        Order Summary
+                    </h3>
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span class="text-muted">
+                            Products
+                        </span>
+
+                        <span class="fw-bold">
+                            @Model.CartItems.Count()
+                        </span>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-4">
+
+                        <span class="text-muted">
+                            Total
+                        </span>
+
+                        <span class="fw-bold text-success fs-4">
+                            @total JD
+                        </span>
+
+                    </div>
+
+                    <hr />
+
+                    <a asp-controller="Orders"
+                       asp-action="Checkout"
+                       class="btn btn-dark btn-lg w-100 rounded-pill mt-3">
+                        Proceed To Checkout
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>

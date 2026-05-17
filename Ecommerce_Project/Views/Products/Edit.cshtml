@@ -1,0 +1,197 @@
+﻿@model Ecommerce_Project.Models.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow border-0 rounded-4">
+
+                <div class="card-body p-5">
+
+                    <h2 class="fw-bold mb-4">
+                        Edit Product
+                    </h2>
+
+                    <form asp-action="Edit"
+                          enctype="multipart/form-data">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3"></div>
+
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Name -->
+                        <div class="mb-4">
+
+                            <label asp-for="Name"
+                                   class="form-label fw-semibold"></label>
+
+                            <input asp-for="Name"
+                                   class="form-control form-control-lg" />
+
+                            <span asp-validation-for="Name"
+                                  class="text-danger"></span>
+
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+
+                            <label asp-for="Description"
+                                   class="form-label fw-semibold"></label>
+
+                            <textarea asp-for="Description"
+                                      class="form-control"
+                                      rows="4"></textarea>
+
+                            <span asp-validation-for="Description"
+                                  class="text-danger"></span>
+
+                        </div>
+
+                        <!-- Price + Stock -->
+                        <div class="row">
+
+                            <div class="col-md-6 mb-4">
+
+                                <label asp-for="Price"
+                                       class="form-label fw-semibold"></label>
+
+                                <input asp-for="Price"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Price"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label asp-for="StockQuantity"
+                                       class="form-label fw-semibold"></label>
+
+                                <input asp-for="StockQuantity"
+                                       class="form-control" />
+
+                                <span asp-validation-for="StockQuantity"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-4">
+
+                            <label asp-for="CategoryId"
+                                   class="form-label fw-semibold"></label>
+
+                            <select asp-for="CategoryId"
+                                    class="form-select"
+                                    asp-items="ViewBag.CategoryId">
+                            </select>
+
+                        </div>
+
+                        <!-- Availability -->
+                        <div class="form-check mb-4">
+
+                            <input class="form-check-input"
+                                   asp-for="IsAvailable" />
+
+                            <label class="form-check-label fw-semibold"
+                                   asp-for="IsAvailable">
+                            </label>
+
+                        </div>
+
+                        <!-- Current Images -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold d-block mb-3">
+                                Current Images
+                            </label>
+
+                            <div class="d-flex flex-wrap gap-3">
+
+                                @if (Model.ProductImages != null &&
+                                                                Model.ProductImages.Any())
+                                {
+                                    foreach (var image in Model.ProductImages)
+                                    {
+                                        <div class="position-relative">
+
+                                            <img src="@image.ImageUrl"
+                                                 style="
+                                                            width:120px;
+                                                            height:120px;
+                                                            object-fit:cover;
+                                                            border-radius:15px;
+                                                            border:1px solid #ddd;" />
+
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">
+                                        No Images Found
+                                    </p>
+                                }
+
+                            </div>
+
+                        </div>
+
+                        <!-- Upload New Images -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Upload New Images
+                            </label>
+
+                            <input type="file"
+                                   name="newImages"
+                                   class="form-control"
+                                   multiple />
+
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-3">
+
+                            <button type="submit"
+                                    class="btn btn-dark px-4">
+                                Save Changes
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary px-4">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

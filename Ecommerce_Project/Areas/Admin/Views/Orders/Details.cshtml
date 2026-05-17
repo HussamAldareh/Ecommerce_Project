@@ -1,0 +1,102 @@
+﻿@model Ecommerce_Project.Models.Order
+
+@{
+    Layout = "_AdminLayout"; // Connects to your Emerald sidebar and navbar
+    ViewData["PageTitle"] = "Order Record #" + Model?.Id;
+    ViewData["PageCrumb"] = "Orders / Details";
+}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="lx-card mb-4">
+            <div class="lx-card-header">
+                <div class="lx-card-title"><i class="bi bi-info-circle-fill"></i> Order Information</div>
+                <div class="d-flex gap-2">
+
+                    <a asp-area="Admin" asp-action="Index" class="btn-lx-outline btn-sm">Back to Ledger</a>
+                </div>
+            </div>
+            <div class="lx-card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label class="text-white small text-uppercase fw-bold">Date Placed</label>
+                        <div class="fw-bold">@Model.OrderDate.ToString("MMM dd, yyyy HH:mm")</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-white small text-uppercase fw-bold">Total Revenue</label>
+                        <div class="fw-bold text-success">$@Model.TotalAmount.ToString("N2")</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-white small text-uppercase fw-bold">Current Status</label>
+                        <div>
+                            <span class="lx-badge @(Model.Status == "Completed" ? "b-success" : Model.Status == "Cancelled" ? "b-danger" : "b-warning")">
+                                @Model.Status
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lx-card">
+            <div class="lx-card-header">
+                <div class="lx-card-title"><i class="bi bi-cart-fill"></i> Line Items</div>
+            </div>
+            <div class="table-wrap">
+                <table class="lx-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Unit Price</th>
+                            <th>Qty</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.OrderItems != null && Model.OrderItems.Any())
+                        {
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@item.Product?.Name</td>
+                                    <td>$@item.Price.ToString("N2")</td>
+                                    <td>@item.Quantity</td>
+                                    <td class="text-success fw-bold">$@(item.Price* item.Quantity)</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-white">
+                                    No line items found for this order.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="lx-card">
+            <div class="lx-card-header">
+                <div class="lx-card-title"><i class="bi bi-person-badge-fill"></i> Client & Logistics</div>
+            </div>
+            <div class="lx-card-body">
+                <div class="mb-4">
+                    <label class="text-white small text-uppercase fw-bold">Customer Name</label>
+                    <div class="fw-bold">@Model.User.FullName</div>
+                    <div class="text-white small">@Model.User?.Email</div>
+                </div>
+                <div class="mb-0">
+                    <label class="text-white small text-uppercase fw-bold">Shipping Address</label>
+                    <div class="p-3 bg-dark rounded border border-secondary" style="font-size: 13px;">
+                        @Model.ShippingAddress
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

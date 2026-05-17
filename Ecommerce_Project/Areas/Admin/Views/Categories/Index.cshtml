@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.Category>
+@{
+    Layout = "_AdminLayout";
+    ViewData["PageTitle"] = "Categories";
+}
+
+<div class="page-header">
+    <h5><i class="bi bi-tags-fill me-2" style="color:var(--gold)"></i>Product Categories</h5>
+    <a asp-area="Admin" asp-action="Create" class="btn-lx-primary"><i class="bi bi-plus-lg"></i> Add Category</a>
+</div>
+
+<div class="lx-card">
+    <div class="table-wrap">
+        <table class="lx-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-cat.png" : item.ImageUrl)"
+                                 style="width:50px; height:50px; border-radius:8px; object-fit:cover;" />
+                        </td>
+                        <td><strong>@item.Name</strong></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a asp-area="Admin" asp-action="Edit" asp-route-id="@item.Id" class="btn-icon edit"><i class="bi bi-pencil-fill"></i></a>
+                                <button onclick="confirmCategoryDelete(@item.Id, '@item.Name')" class="btn-icon del">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </div>
+
+                            <form id="delete-form-@item.Id" asp-area="Admin" asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:none;">
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmCategoryDelete(id, name) {
+            Swal.fire({
+                title: 'Delete ' + name + '?',
+                text: "All products in this category will become uncategorized!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d4af37',
+                cancelButtonColor: '#004225',
+                confirmButtonText: 'Yes, delete it!',
+                background: '#081c15',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        }
+    </script>
+}

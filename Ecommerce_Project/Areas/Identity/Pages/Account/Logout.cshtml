@@ -1,0 +1,106 @@
+﻿@page
+@model LogoutModel
+
+@{
+    ViewData["Title"] = "Logout";
+}
+
+<style>
+
+    body {
+        background: #081c15;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .logout-wrapper {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 15px;
+    }
+
+    .logout-card {
+        background: #10271f;
+        border-radius: 30px;
+        padding: 50px;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        border: 1px solid rgba(212,175,55,0.15);
+    }
+
+    .logout-title {
+        color: #d4af37;
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .logout-text {
+        color: #cfcfcf;
+        margin-bottom: 35px;
+        font-size: 18px;
+    }
+
+    .logout-btn {
+        background: #d4af37;
+        color: #081c15;
+        border: none;
+        border-radius: 50px;
+        padding: 14px 35px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .logout-btn:hover {
+            background: #004225;
+            color: white;
+        }
+
+    .success-text {
+        color: #d4af37;
+        font-size: 20px;
+    }
+
+</style>
+
+<div class="logout-wrapper">
+
+    <div class="logout-card">
+
+        <h1 class="logout-title">
+            Logout
+        </h1>
+
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <p class="logout-text">
+                Are you sure you want to logout?
+            </p>
+
+            <form asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+                  method="post">
+
+                <button type="submit"
+                        class="logout-btn">
+
+                    Logout
+
+                </button>
+
+            </form>
+        }
+        else
+        {
+            <p class="success-text">
+                You have successfully logged out.
+            </p>
+        }
+
+    </div>
+
+</div>

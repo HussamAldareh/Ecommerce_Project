@@ -1,0 +1,100 @@
+﻿@using System.Text.Encodings.Web
+
+@model IEnumerable<Ecommerce_Project.Models.Product>
+@{
+    Layout = "_AdminLayout";
+    ViewData["PageTitle"] = "Product Catalogue";
+}
+
+<div class="page-section active">
+    <div class="page-header">
+        <h5><i class="bi bi-box-seam-fill me-2" style="color:var(--gold)"></i>Manage Products</h5>
+        <a asp-area="Admin" asp-action="Create" class="btn-lx-primary"><i class="bi bi-plus-lg"></i> Add New Product</a>
+    </div>
+
+    <div class="lx-card">
+        <div class="filter-bar">
+            <div class="search-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" id="productSearch" onkeyup="filterTbl('productTable', this.value)" placeholder="Search products..." />
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="lx-table" id="productTable">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="td-product">
+                                    <div class="td-thumb">
+                                        <img src="@(item.ProductImages?.FirstOrDefault()?.ImageUrl ?? "/images/no-image.png")" />
+                                    </div>
+                                    <div class="td-name">@item.Name</div>
+                                </div>
+                            </td>
+                            <td><span class="lx-badge b-dark">@item.Category?.Name</span></td>
+                            <td><strong>@item.Price.ToString("C")</strong></td>
+                            <td>
+                                <div class="stock-bar">
+                                    <span style="font-size:12px">@item.StockQuantity</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-area="Admin" asp-action="Edit" asp-route-id="@item.Id" class="btn-icon edit" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-area="Admin" asp-action="Details" asp-route-id="@item.Id" class="btn-icon view" title="View">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+
+                                    <button type="button" class="btn-icon del" title="Delete"
+                                            onclick="confirmProductDelete(@item.Id, '@Html.Raw(JavaScriptEncoder.Default.Encode(item.Name))')">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+
+                                    <form id="delete-form-@item.Id" asp-area="Admin" asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:none;">
+                                        @Html.AntiForgeryToken()
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmProductDelete(id, name) {
+            Swal.fire({
+                title: 'Remove ' + name + '?',
+                text: "This will permanently delete the product and all associated images!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d4af37', // Gold
+                cancelButtonColor: '#004225',  // Emerald
+                confirmButtonText: 'Yes, Delete Item',
+                background: '#081c15',
+                color: '#f8fafc'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the hidden form
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        }
+    </script>
+}

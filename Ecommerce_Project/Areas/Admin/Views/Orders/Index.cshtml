@@ -1,0 +1,300 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.Order>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["PageTitle"] = "Orders";
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-gold"><i class="bi bi-coin"></i></div>
+            <div>
+                <div class="stat-num">$@Model.Sum(o => o.TotalAmount).ToString("N0")</div>
+                <div class="stat-lbl">Total Value</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-green"><i class="bi bi-check-circle-fill"></i></div>
+            <div>
+                <div class="stat-num">@Model.Count(o => o.Status == "Completed")</div>
+                <div class="stat-lbl">Completed</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue"><i class="bi bi-arrow-repeat"></i></div>
+            <div>
+                <div class="stat-num">@Model.Count(o => o.Status == "Processing")</div>
+                <div class="stat-lbl">Processing</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-red"><i class="bi bi-x-circle-fill"></i></div>
+            <div>
+                <div class="stat-num">@Model.Count(o => o.Status == "Cancelled")</div>
+                <div class="stat-lbl">Cancelled</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Active user filter banner *@
+@if (ViewData["FilterTitle"].ToString() != "All Orders Entries")
+{
+    <div class="user-filter-banner mb-3">
+        <i class="bi bi-person-circle"></i>
+        <span>Filtering by: <strong>@ViewData["FilterTitle"]</strong></span>
+        <a asp-area="Admin" asp-action="Index" class="btn-lx-outline ms-auto">
+            <i class="bi bi-x-lg"></i> Clear Filter
+        </a>
+    </div>
+}
+
+@* Main card *@
+<div class="lx-card shadow-sm border-0">
+
+    @* Card header *@
+    <div class="lx-card-header">
+        <div class="lx-card-title">
+            <i class="bi bi-journal-text"></i>
+            @ViewData["FilterTitle"]
+        </div>
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <select id="status-filter" class="form-select form-select-sm lx-input-mini"
+                    onchange="filterByStatus(this.value)"
+                    style="min-width:150px; height:34px;">
+                <option value="">All Statuses</option>
+                <option value="Processing">Processing</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+    </div>
+
+    @* Filter bar / search *@
+    <div class="filter-bar">
+        <div class="search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text"
+                   id="order-search"
+                   class="form-control"
+                   placeholder="Search by ID, FullName, amount…"
+                   oninput="filterTable()" />
+        </div>
+    </div>
+
+    @* Table *@
+    <div class="table-wrap">
+        <table class="lx-table" id="orders-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Client Vault</th>
+                    <th>Placement Date</th>
+                    <th>Total Value</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr data-status="@item.Status"
+                        data-search="@item.Id @item.User?.FullName @item.TotalAmount">
+                        <td>
+                            <span style="color:var(--muted);font-size:12px">#</span><strong>@item.Id</strong>
+                        </td>
+                        <td>
+                            <a asp-area="Admin" asp-action="Index"
+                               asp-route-userId="@item.UserId"
+                               class="fw-bold text-decoration-none"
+                               style="color:var(--gold)">
+                                @item.User?.FullName
+                            </a>
+                        </td>
+                        <td style="color:var(--muted);font-size:13px">
+                            @item.OrderDate.ToString("MMM dd, yyyy")
+                        </td>
+                        <td style="color:#4ade80;font-weight:700">
+                            $@item.TotalAmount.ToString("N2")
+                        </td>
+                        <td>
+                            <span id="status-badge-@item.Id"
+                                  class="lx-badge @(item.Status == "Completed" ? "b-success" : item.Status == "Cancelled" ? "b-danger" : "b-warning")">
+                                @item.Status
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 align-items-center">
+                                <select class="form-select form-select-sm lx-input-mini"
+                                        style="min-width:140px; height:30px; font-size:12px;"
+                                        onchange="updateOrderStatus(@item.Id, this.value, this)"
+                                        aria-label="Update status for order #@item.Id">
+                                    <option value="" disabled selected>Update…</option>
+                                    <option value="Processing">Processing</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                                <a asp-action="Details"
+                                   asp-route-id="@item.Id"
+                                   class="btn-icon view"
+                                   title="View order #@item.Id">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @* Table footer — row count *@
+    <div class="d-flex align-items-center justify-content-between px-4 py-2"
+         style="background:var(--green-dark);border-top:1px solid var(--border);font-size:12px;color:var(--muted);">
+        <span id="row-count">@Model.Count() entries</span>
+    </div>
+</div>
+
+@* Toast notification *@
+<div id="lx-toast-container" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;"></div>
+
+@* Extra page-specific styles *@
+@* <style>
+    .user-filter-banner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(200, 164, 77, .12);
+        border: 1px solid rgba(200, 164, 77, .3);
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 13px;
+        color: var(--gold);
+    }
+
+        .user-filter-banner i {
+            font-size: 18px;
+        }
+
+    /* Compact select inside table */
+    .lx-input-mini {
+        background: var(--green-mid) !important;
+        color: var(--text) !important;
+        border-color: var(--border) !important;
+        border-radius: 7px !important;
+        font-size: 12px !important;
+        cursor: pointer;
+    }
+
+        .lx-input-mini:focus {
+            border-color: var(--gold) !important;
+            box-shadow: 0 0 0 3px rgba(200, 164, 77, .2) !important;
+        }
+
+        .lx-input-mini option {
+            background: var(--green-dark);
+        }
+
+    /* Hidden rows (search/filter) */
+    .lx-table tbody tr.lx-hidden {
+        display: none;
+    }
+</style> *@
+
+@* Page scripts *@
+<script>
+    /* ── Client-side status update ─────────────────────── */
+    async function updateOrderStatus(orderId, newStatus, selectEl) {
+        if (!newStatus) return;
+
+        try {
+            const res = await fetch(`/Orders/UpdateStatus`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('[name=__RequestVerificationToken]')?.value ?? ''
+                },
+                body: JSON.stringify({ id: orderId, status: newStatus })
+            });
+
+            if (!res.ok) throw new Error('Server error');
+
+            /* Update badge in-place */
+            const badge = document.getElementById('status-badge-' + orderId);
+            if (badge) {
+                badge.className = 'lx-badge ' + badgeClass(newStatus);
+                badge.textContent = newStatus;
+
+                /* Also update data-status on the row for the status filter */
+                badge.closest('tr').dataset.status = newStatus;
+            }
+
+            showToast(`Order #${orderId} → ${newStatus}`, newStatus === 'Cancelled' ? 'danger' : newStatus === 'Processing' ? 'warning' : 'success');
+        } catch (err) {
+            showToast('Failed to update status', 'danger');
+            console.error(err);
+        } finally {
+            selectEl.value = ''; /* Reset to placeholder */
+        }
+    }
+
+    /* ── Badge class helper ────────────────────────────── */
+    function badgeClass(status) {
+        if (status === 'Completed') return 'b-success';
+        if (status === 'Cancelled') return 'b-danger';
+        return 'b-warning';
+    }
+
+    /* ── Client-side search filter ─────────────────────── */
+    function filterTable() {
+        applyFilters();
+    }
+
+    function filterByStatus(value) {
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const q = document.getElementById('order-search').value.toLowerCase().trim();
+        const status = document.getElementById('status-filter').value;
+        const rows = document.querySelectorAll('#orders-table tbody tr');
+        let visible = 0;
+
+        rows.forEach(row => {
+            const matchSearch = !q || row.dataset.search?.toLowerCase().includes(q);
+            const matchStatus = !status || row.dataset.status === status;
+            const show = matchSearch && matchStatus;
+            row.classList.toggle('lx-hidden', !show);
+            if (show) visible++;
+        });
+
+        const total = rows.length;
+        document.getElementById('row-count').textContent =
+            q || status
+                ? `Showing ${visible} of ${total} entries`
+                : `${total} entries`;
+    }
+
+    /* ── Toast ─────────────────────────────────────────── */
+    function showToast(message, type = 'success') {
+        const iconMap = { success: 'bi-check-circle-fill', danger: 'bi-x-circle-fill', warning: 'bi-arrow-repeat' };
+        const bgMap   = { success: 'var(--success)', danger: 'var(--danger)', warning: 'var(--warning)' };
+        const colorMap = { success: '#fff', danger: '#fff', warning: '#111' };
+
+        const toast = document.createElement('div');
+        toast.className = 'lx-toast';
+        toast.style.cssText = `background:${bgMap[type]};color:${colorMap[type]};display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:11px;font-size:13px;font-weight:600;min-width:220px;box-shadow:0 8px 20px rgba(0,0,0,.4);animation:slideToast .3s ease;`;
+        toast.innerHTML = `<i class="bi ${iconMap[type]}" style="font-size:17px;flex-shrink:0"></i><span>${message}</span>`;
+
+        const container = document.getElementById('lx-toast-container');
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+</script>

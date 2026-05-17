@@ -1,0 +1,151 @@
+﻿@model Ecommerce_Project.Models.Category
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Edit Category";
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-emerald">Refine Category</h2>
+            <p class="text-muted small">Update the branding and details for @Model.Name</p>
+        </div>
+        <a asp-area="Admin" asp-action="Index" class="btn-lx-outline">
+            <i class="bi bi-arrow-left me-2"></i> Back to Catalogue
+        </a>
+    </div>
+
+    <form asp-area="Admin" asp-action="Edit" enctype="multipart/form-data" id="edit-form">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ImageUrl" />
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="lx-card shadow-sm border-0">
+                    <div class="lx-card-header mb-4">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2 text-gold"></i>General Information</h5>
+                    </div>
+                    <div class="lx-card-body">
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-semibold">Category Identity</label>
+                            <input asp-for="Name" class="form-control lx-input" placeholder="e.g. Premium Timepieces" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">Narrative Description</label>
+                            <textarea asp-for="Description" class="form-control lx-input" rows="6" placeholder="Describe the essence of this category..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="lx-card shadow-sm border-0 mb-4">
+                    <div class="lx-card-header mb-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-image me-2 text-gold"></i>Visual Asset</h5>
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <button type="button" class="btn btn-sm text-danger p-0" onclick="deleteCategoryImage(@Model.Id)" title="Delete Image">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        }
+                    </div>
+
+                    <div class="category-preview-wrapper mb-3 text-center">
+                        <div class="preview-container" style="border: 2px dashed var(--gold); padding: 10px; border-radius: 15px; background: var(--dark-green);">
+                            <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/placeholder-cat.png" : Model.ImageUrl)"
+                                 id="preview"
+                                 class="img-fluid rounded shadow-sm"
+                                 style="max-height: 200px; width: 100%; object-fit: cover;" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="btn-lx-outline w-100 py-2" style="cursor: pointer;">
+                            <i class="bi bi-upload me-2"></i> Replace Image
+                            <input type="file" name="newImage" accept="image/*" class="d-none" onchange="previewImage(event)" />
+                        </label>
+                        <p class="text-center x-small mt-2" style="color: var(--muted)">Recommended size: 800x800px (WebP/JPG)</p>
+                    </div>
+                </div>
+
+                <div class="lx-card shadow-sm border-0">
+
+                    <button type="submit" class="btn-lx-gold w-100 py-3 shadow">
+                        <i class="bi bi-check2-circle me-2"></i> Publish Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Image Preview Logic
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('preview');
+                output.src = reader.result;
+                output.style.opacity = "0";
+                setTimeout(() => { output.style.opacity = "1"; output.style.transition = "0.5s"; }, 10);
+            };
+            reader.readAsDataURL(event.target.files[0]);
+            isDirty = true;
+        }
+
+        let isDirty = false;
+        const form = document.getElementById('edit-form');
+
+        form.addEventListener('input', () => isDirty = true);
+        form.addEventListener('submit', () => isDirty = false);
+
+        window.addEventListener('beforeunload', (e) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = 'You have unsaved changes. Are you sure you want to leave the LUXORA vault?';
+            }
+        });
+
+                async function deleteCategoryImage(categoryId) {
+            const result = await Swal.fire({
+                title: 'Remove visual asset?',
+                text: "The category will remain, but the image will be permanently deleted.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d4af37', // LUXORA Gold
+                cancelButtonColor: '#004225',  // LUXORA Emerald
+                confirmButtonText: 'Yes, remove it',
+                background: '#081c15',
+                color: '#f8fafc'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/Categories/RemoveImage/${categoryId}`, {
+                        method: 'POST',
+                        headers: {
+                            "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    });
+
+                    if (response.ok) {
+                        document.getElementById('preview').src = "/images/placeholder-cat.png";
+                        event.target.closest('button').style.display = 'none';
+
+                        notify('success', 'Asset Removed', 'The category image has been deleted.');
+                    } else {
+                        notify('error', 'Action Failed', 'Could not remove the image from the vault.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    notify('error', 'Error', 'Something went wrong.');
+                }
+            }
+        }
+    </script>
+}

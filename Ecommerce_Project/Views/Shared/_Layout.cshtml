@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - ZORA</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/Ecommerce_Project.styles.css"
+          asp-append-version="true" />
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #081c15;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* NAVBAR */
+
+        .lux-navbar {
+            background: rgba(8, 28, 21, 0.95);
+            border-bottom: 1px solid rgba(212,175,55,0.15);
+            padding: 18px 0;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand-logo {
+            font-size: 34px;
+            font-weight: 800;
+            color: #d4af37 !important;
+            letter-spacing: 4px;
+        }
+
+        .nav-link-custom {
+            color: white !important;
+            margin-left: 25px;
+            font-weight: 500;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+            .nav-link-custom:hover {
+                color: #d4af37 !important;
+            }
+
+        .cart-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #d4af37;
+            color: #081c15 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            transition: 0.3s;
+            margin-left: 25px;
+        }
+
+            .cart-btn:hover {
+                background: #004225;
+                color: white !important;
+                transform: scale(1.05);
+            }
+
+        .main-content {
+            min-height: 80vh;
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: #04110d;
+            margin-top: 80px;
+            padding: 50px 0;
+            border-top: 1px solid rgba(212,175,55,0.1);
+        }
+
+        .footer-title {
+            color: #d4af37;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .footer-text {
+            color: #ccc;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-lg lux-navbar">
+
+        <div class="container">
+
+            <a class="navbar-brand brand-logo"
+               asp-controller="Home"
+               asp-action="Index">
+                ZORA
+            </a>
+
+            <button class="navbar-toggler bg-light"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarContent">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <div class="collapse navbar-collapse"
+                 id="navbarContent">
+
+                <ul class="navbar-nav ms-auto align-items-center">
+
+                    <li class="nav-item">
+
+                        <a class="nav-link nav-link-custom"
+                           asp-controller="Home"
+                           asp-action="Index">
+                            Home
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link nav-link-custom"
+                           asp-controller="Products"
+                           asp-action="Index">
+                            Products
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link nav-link-custom"
+                           asp-controller="Products"
+                           asp-action="Offers">
+                            Offers
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="cart-btn"
+                           asp-controller="CartItems"
+                           asp-action="MyCart">
+                            🛒
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item ms-3 text-white">
+
+                        <partial name="_LoginPartial" />
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <!-- MAIN -->
+
+    <div class="main-content">
+
+        @RenderBody()
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <h3 class="footer-title">
+                        ZORA
+                    </h3>
+
+                    <p class="footer-text">
+                        Luxury watches and handbags
+                        crafted for timeless elegance.
+                    </p>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <h5 class="footer-title">
+                        Quick Links
+                    </h5>
+
+                    <ul class="list-unstyled">
+
+                        <li class="mb-2">
+                            Home
+                        </li>
+
+                        <li class="mb-2">
+                            Products
+                        </li>
+
+                        <li class="mb-2">
+                            Offers
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <h5 class="footer-title">
+                        Contact
+                    </h5>
+
+                    <p class="footer-text">
+                        info@zora.com
+                    </p>
+
+                    <p class="footer-text">
+                        +962 7 9000 0000
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
