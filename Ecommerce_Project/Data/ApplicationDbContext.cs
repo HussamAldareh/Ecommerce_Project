@@ -47,6 +47,7 @@ namespace Ecommerce_Project.Data
                 .WithOne(o => o.Payment)
                 .HasForeignKey<Payment>(p => p.OrderId);
         }
+        public DbSet<Ecommerce_Project.Models.Discount> Discount { get; set; } = default!;
 
 
 

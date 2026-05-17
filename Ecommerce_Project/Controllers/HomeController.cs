@@ -1,32 +1,41 @@
-using System.Diagnostics;
-using Ecommerce_Project.Models;
+using Ecommerce_Project.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce_Project.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(
+            ILogger<HomeController> logger,
+            ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string category)
         {
-            return View();
-        }
+            var products = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Include(p => p.Discounts)
+                .AsQueryable();
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            if (!string.IsNullOrEmpty(category))
+            {
+                products = products.Where(p => p.Category.Name == category);
+            }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+
+            ViewBag.Testimonials=await _context.testimonials.Include(t => t.User).Where(t => t.IsApproved).ToListAsync();
+
+
+            return View(await products.ToListAsync());
         }
     }
 }

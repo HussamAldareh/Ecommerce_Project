@@ -16,8 +16,8 @@
         public bool IsActive { get; set; } = true;
 
         public int ProductId { get; set; }
-        public Product Product { get; set; }
-        public decimal MinmumAmount { get; set; }
+        public Product? Product { get; set; }
+        public decimal? MinmumAmount { get; set; }
 
     }
 }

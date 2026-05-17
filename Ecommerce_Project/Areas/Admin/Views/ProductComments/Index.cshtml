@@ -1,0 +1,292 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.ReviewItemViewModel>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Comments Management";
+}
+
+<div class="row g-3 mb-4">
+
+    <div class="col-6 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-gold">
+                <i class="bi bi-chat-left-text-fill"></i>
+            </div>
+
+            <div>
+                <div class="stat-num">
+                    @Model.Count()
+                </div>
+
+                <div class="stat-lbl">
+                    Total Comments
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-green">
+                <i class="bi bi-shield-check"></i>
+            </div>
+
+            <div>
+                <div class="stat-num">
+                    @Model.Count(c => c.IsApproved)
+                </div>
+
+                <div class="stat-lbl">
+                    Approved
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-red">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+
+            <div>
+                <div class="stat-num">
+                    @Model.Count(c => !c.IsApproved)
+                </div>
+
+                <div class="stat-lbl">
+                    Pending
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="lx-card shadow-sm border-0">
+
+    <div class="lx-card-header">
+
+        <div class="lx-card-title">
+            <i class="bi bi-chat-square-text-fill"
+               style="color:var(--gold);"></i>
+
+            Comments Queue
+        </div>
+
+    </div>
+
+    <div class="table-wrap">
+
+        <table class="lx-table" id="comments-table">
+
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Comment</th>
+                    <th>Status</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr id="comment-row-@item.CommentId"
+                        data-approved="@item.IsApproved.ToString().ToLower()"
+                        data-search="@item.CustomerName @item.ProductName @item.CommentText">
+
+                        <td>
+
+                            <div class="fw-bold"
+                                 style="color:var(--text);">
+                                @item.CustomerName
+                            </div>
+
+                            <div style="font-size:11px; color:var(--muted);">
+                                @item.CustomerEmail
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="fw-bold"
+                                 style="color:var(--gold);">
+                                @item.ProductName
+                            </div>
+
+                            <div style="font-size:11px; color:var(--muted);">
+                                <i class="bi bi-clock me-1"></i>
+                                @item.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="review-text"
+                                 style="font-size:13px;
+                                            line-height:1.4;
+                                            color:var(--text-light);">
+
+                                "@item.CommentText"
+
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span id="badge-@item.CommentId"
+                                  class="lx-badge @(item.IsApproved ? "b-success" : "b-warning")">
+
+                                <i class="bi @(item.IsApproved ? "bi-check-circle-fill" : "bi-hourglass-split")"></i>
+
+                                @(item.IsApproved ? "Approved" : "Pending")
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="d-flex gap-2 justify-content-end">
+
+                                <button type="button"
+                                        class="btn-icon view"
+                                        id="btn-toggle-@item.CommentId"
+                                        onclick="toggleCommentApproval(@item.CommentId)">
+
+                                    <i class="bi @(item.IsApproved ? "bi-shield-x" : "bi-shield-check")"></i>
+
+                                </button>
+
+                                <button type="button"
+                                        class="btn-icon del"
+                                        onclick="softDeleteComment(@item.CommentId, this)">
+
+                                    <i class="bi bi-trash3-fill"></i>
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        async function toggleCommentApproval(id) {
+
+            try {
+
+                const response = await fetch(`/Admin/ProductComments/ToggleApproval?id=${id}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+
+                    const badge = document.getElementById(`badge-${id}`);
+                    const button = document.getElementById(`btn-toggle-${id}`);
+
+                    if (data.approved) {
+
+                        badge.className = 'lx-badge b-success';
+                        badge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Approved';
+
+                        button.querySelector('i').className = 'bi bi-shield-x';
+
+                    }
+                    else {
+
+                        badge.className = 'lx-badge b-warning';
+                        badge.innerHTML = '<i class="bi bi-hourglass-split"></i> Pending';
+
+                        button.querySelector('i').className = 'bi bi-shield-check';
+
+                    }
+
+                }
+
+            }
+            catch {
+
+                Swal.fire(
+                    'Error',
+                    'Something went wrong',
+                    'error'
+                );
+
+            }
+
+        }
+
+        async function softDeleteComment(id, element) {
+
+            const result = await Swal.fire({
+                title: 'Delete Comment?',
+                text: "This comment will be removed.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#004225',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Delete'
+            });
+
+            if (result.isConfirmed) {
+
+                try {
+
+                    const response = await fetch(`/Admin/ProductComments/SoftDeleteComment?id=${id}`, {
+                        method: 'POST'
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+
+                        const row = element.closest('tr');
+
+                        row.style.opacity = "0";
+
+                        setTimeout(() => {
+                            row.remove();
+                        }, 400);
+
+                    }
+
+                }
+                catch {
+
+                    Swal.fire(
+                        'Error',
+                        'Delete failed',
+                        'error'
+                    );
+
+                }
+
+            }
+
+        }
+
+    </script>
+
+}

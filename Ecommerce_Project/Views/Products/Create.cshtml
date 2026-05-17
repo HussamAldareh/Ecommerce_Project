@@ -1,0 +1,178 @@
+﻿@model Ecommerce_Project.Models.Product
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<style>
+
+
+    *{color:black}
+
+
+</style>
+
+
+
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow border-0 rounded-4">
+
+                <div class="card-body p-5">
+
+                    <h2 class="fw-bold mb-4">
+                        Create Product
+                    </h2>
+
+                    <form asp-action="Create"
+                          enctype="multipart/form-data">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3"></div>
+
+                        <!-- Name -->
+                        <div class="mb-4">
+
+                            <label asp-for="Name"
+                                   class="form-label fw-semibold" style="color:black"></label>
+
+                            <input asp-for="Name"
+                                   class="form-control form-control-lg" />
+
+                            <span asp-validation-for="Name"
+                                  class="text-danger"></span>
+
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+
+                            <label asp-for="Description"
+                                   class="form-label fw-semibold"></label>
+
+                            <textarea asp-for="Description"
+                                      class="form-control"
+                                      rows="4"></textarea>
+
+                            <span asp-validation-for="Description"
+                                  class="text-danger"></span>
+
+                        </div>
+
+                        <!-- Price -->
+                        <div class="row">
+
+                            <div class="col-md-6 mb-4">
+
+                                <label asp-for="Price"
+                                       class="form-label fw-semibold"></label>
+
+                                <input asp-for="Price"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Price"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                            <!-- Stock -->
+                            <div class="col-md-6 mb-4">
+
+                                <label asp-for="StockQuantity"
+                                       class="form-label fw-semibold"></label>
+
+                                <input asp-for="StockQuantity"
+                                       class="form-control" />
+
+                                <span asp-validation-for="StockQuantity"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-4">
+
+                            <label asp-for="CategoryId"
+                                   class="form-label fw-semibold"></label>
+
+                            <select asp-for="CategoryId"
+                                    class="form-select"
+                                    asp-items="ViewBag.CategoryId">
+
+                                <option disabled selected>
+                                    Select Category
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Availability -->
+                        <div class="form-check mb-4">
+
+                            <input class="form-check-input"
+                                   asp-for="IsAvailable" />
+
+                            <label class="form-check-label fw-semibold"
+                                   asp-for="IsAvailable">
+                            </label>
+
+                        </div>
+
+                        <!-- Images -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Product Images
+                            </label>
+
+                            <input type="file"
+                                   name="imageFiles"
+                                   class="form-control"
+                                   multiple />
+
+                            <small class="text-muted">
+                                You can upload multiple images.
+                            </small>
+
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-3">
+
+                            <button type="submit"
+                                    class="btn btn-dark px-4">
+                                Create Product
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary px-4">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

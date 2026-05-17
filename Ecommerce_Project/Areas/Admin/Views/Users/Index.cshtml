@@ -1,0 +1,114 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.ApplicationUser>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Users";
+    ViewData["PageTitle"] = "Users";
+    ViewData["PageCrumb"] = "Admin / Users";
+}
+
+<div id="page-users" class="page-section active">
+    <div class="page-header">
+        <h5><i class="bi bi-people-fill me-2" style="color:var(--gold)"></i>Users</h5>
+        <button class="btn-lx-outline" onclick="notify('info', 'System Ledger', 'Preparing user data for export...')">
+            <i class="bi bi-download"></i> Export
+        </button>
+    </div>
+
+    <div class="lx-card">
+        <div class="filter-bar">
+            <div class="search-wrap">
+                <i class="bi bi-search"></i>
+                <input class="form-control" type="text" placeholder="Search by name or email…"
+                       oninput="filterTbl('users-tbl', this.value)" />
+            </div>
+            <select class="form-select" style="width:130px">
+                <option value="">All Roles</option>
+                <option>Admin</option>
+                <option>Customer</option>
+            </select>
+            <select class="form-select" style="width:130px">
+                <option value="">All Status</option>
+                <option>Active</option>
+                <option>Inactive</option>
+            </select>
+        </div>
+
+        <div class="table-wrap">
+            <table class="lx-table" id="users-tbl">
+                <thead>
+                    <tr>
+                        <th style="width:36px">
+                            <input type="checkbox" onclick="toggleAll(this, 'users-tbl')" />
+                        </th>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var user in Model)
+                        {
+                            @* Line 50: Null-safe search data *@
+                            <tr data-search="@(user.FullName?.ToLower() ?? "") @(user.Email?.ToLower() ?? "")">
+                                <td><input type="checkbox" /></td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:10px">
+                                        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--gold));display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;flex-shrink:0">
+                                            @* Line 53-54: Null-safe substring logic *@
+                                            @((user.FullName?.Length >= 2) ? user.FullName.Substring(0, 2).ToUpper() : "LX")
+                                        </div>
+                                        @* Line 55: Null-safe display name *@
+                                        <strong>@(user.FullName ?? "Unknown User")</strong>
+                                    </div>
+                                </td>
+                                <td><span style="font-size:12px">@(user.Email ?? "No Email")</span></td>
+                                <td><span class="lx-badge b-info"><i class="bi bi-person-fill"></i>Customer</span></td>
+                                <td style="font-size:12px;color:var(--muted)">Recent</td>
+                                <td><span class="lx-badge b-success"><i class="bi bi-circle-fill" style="font-size:7px"></i>Active</span></td>
+                                <td>
+                                    <div style="display:flex;gap:5px">
+                                        <button class="btn-icon view" title="View Details"
+                                                onclick="notify('info', 'User Profile', 'Accessing details for @(user.FullName ?? "User")')">
+                                            <i class="bi bi-receipt-cutoff"></i>
+                                        </button>
+                                        <button class="btn-icon del" title="Delete"
+                                                onclick="notify('warning', 'Vault Security', 'Please use the Edit panel to deactivate users.')">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                No users found in the Luxora vault.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--border)">
+            <span style="font-size:12px;color:var(--muted)">
+                @if (Model != null)
+                {
+                    <span>Showing @Model.Count() total members in the vault</span>
+                }
+            </span>
+            <div class="lx-pagination">
+                <button class="pg-btn"><i class="bi bi-chevron-left"></i></button>
+                <button class="pg-btn active">1</button>
+                <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

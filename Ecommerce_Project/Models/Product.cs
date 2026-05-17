@@ -27,7 +27,9 @@
         public ICollection<CartItem>? CartItems { get; set; }
 
         public ICollection<WishlistItem>? WishlistItems { get; set; }
-    }
+
+        public ICollection<Discount>? Discounts { get; set; }
+    
 
 
 }

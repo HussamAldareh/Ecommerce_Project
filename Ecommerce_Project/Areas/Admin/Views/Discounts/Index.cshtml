@@ -1,0 +1,145 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.Discount>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Campaign Vault";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white m-0" style="font-size: 20px; font-weight: 600; letter-spacing: 0.5px;">
+        <i class="bi bi-percent text-warning me-2"></i>Promotional Campaigns
+    </h2>
+    <a asp-area="Admin" asp-controller="Discounts" asp-action="Index" class="btn-lx-primary">
+        <i class="bi bi-plus-lg me-1"></i>Apply New Discount
+    </a>
+</div>
+
+<div class="lx-card shadow-sm border-0">
+    <div class="table-wrap">
+        <table class="lx-table" id="discounts-table">
+            <thead>
+                <tr>
+                    <th>Campaign / Rule</th>
+                    <th>Target Product</th>
+                    <th>Discount Rate</th>
+                    <th>Validity Window</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted p-4">No active promotional campaigns configured.</td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr id="discount-row-@item.Id" data-search="@item.Title @item.Product?.Name @item.Percentage%">
+                        <td>
+                            <div class="fw-bold" style="color:var(--text);">@item.Title</div>
+                            <div style="font-size:11px; color:var(--muted);">
+                                Min. Order: $@(item.MinmumAmount?.ToString("N0") ?? "0")
+                            </div>
+                        </td>
+                        <td class="fw-bold" style="color:var(--gold);">
+                            @(item.Product?.Name ?? "Storewide Campaign")
+                        </td>
+                        <td>
+                            <span class="badge bg-danger" style="padding: 5px 10px; font-weight: 700; border-radius: 6px;">
+                                -@item.Percentage%
+                            </span>
+                        </td>
+                        <td style="font-size:12px; color:var(--text-light);">
+                            <div><i class="bi bi-calendar-check text-success me-1"></i>@item.StartDate.ToString("MMM dd, yyyy")</div>
+                            <div><i class="bi bi-calendar-x text-danger me-1"></i>@item.EndDate.ToString("MMM dd, yyyy")</div>
+                        </td>
+                        <td>
+                            <span id="badge-@item.Id" class="lx-badge @(item.IsActive ? "b-success" : "b-warning")">
+                                <i class="bi @(item.IsActive ? "bi-lightning-fill" : "bi-slash-circle")"></i>
+                                @(item.IsActive ? "Active" : "Paused")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn-icon view" id="btn-toggle-@item.Id" onclick="toggleDiscountState(@item.Id)" title="Toggle Campaign Status">
+                                    <i class="bi @(item.IsActive ? "bi-pause-fill" : "bi-play-fill")"></i>
+                                </button>
+                                <button type="button" class="btn-icon del" onclick="purgeDiscountEntry(@item.Id, this)" title="Delete Campaign">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function toggleDiscountState(id) {
+            try {
+                const response = await fetch(`/Admin/Discounts/ToggleActive?id=${id}`, {
+                    method: 'POST',
+                    headers: { 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '' }
+                });
+                if (!response.ok) throw new Error('Network failure');
+                const data = await response.json();
+
+                if (data.success) {
+                    const badge = document.getElementById(`badge-${id}`);
+                    const button = document.getElementById(`btn-toggle-${id}`);
+
+                    if (data.isActive) {
+                        badge.className = 'lx-badge b-success';
+                        badge.innerHTML = '<i class="bi bi-lightning-fill"></i> Active';
+                        button.querySelector('i').className = 'bi bi-pause-fill';
+                        notify('success', 'Campaign Active', 'Discount is live across matching items.');
+                    } else {
+                        badge.className = 'lx-badge b-warning';
+                        badge.innerHTML = '<i class="bi bi-slash-circle"></i> Paired';
+                        button.querySelector('i').className = 'bi bi-play-fill';
+                        notify('warning', 'Campaign Paused', 'Discount taken down from client storefronts.');
+                    }
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Failed to adjust discount settings.', 'error');
+            }
+        }
+
+        async function purgeDiscountEntry(id, element) {
+            const result = await Swal.fire({
+                title: 'Terminate Discount?',
+                text: "This permanently drops this campaign out of your validation lists.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#004225',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Drop it'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/Admin/Discounts/DeleteAjax?id=${id}`, {
+                        method: 'POST',
+                        headers: { 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '' }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        const row = element.closest('tr');
+                        row.style.transition = "all 0.4s ease";
+                        row.style.opacity = "0";
+                        row.style.transform = "scale(0.95)";
+                        setTimeout(() => row.remove(), 400);
+                        notify('success', 'System Cleared', 'Campaign record destroyed.');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'Could not run transaction cleanup.', 'error');
+                }
+            }
+        }
+    </script>
+}

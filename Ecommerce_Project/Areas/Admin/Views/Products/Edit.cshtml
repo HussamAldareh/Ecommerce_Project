@@ -1,0 +1,188 @@
+﻿@model Ecommerce_Project.Models.Product
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["PageTitle"] = "Edit Product";
+}
+
+<div class="page-section active">
+    <div class="page-header">
+        <h5><i class="bi bi-pencil-square me-2" style="color:var(--gold)"></i>Modify Premium Item</h5>
+        <a asp-area="Admin" asp-action="Index" class="btn-lx-outline">Back to Catalogue</a>
+    </div>
+
+    <form asp-area="Admin" asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="lx-card mb-4">
+                    <div class="lx-card-header"><div class="lx-card-title">General Information</div></div>
+                    <div class="lx-card-body">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Price" class="form-label"></label>
+                                <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StockQuantity" class="form-label"></label>
+                                <input asp-for="StockQuantity" class="form-control" type="number" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lx-card">
+                    <div class="lx-card-header">
+                        <div class="lx-card-title"><i class="bi bi-images me-2"></i>Current Gallery</div>
+                    </div>
+                    <div class="lx-card-body">
+                        <div class="d-flex flex-wrap gap-3">
+                            @if (Model.ProductImages != null && Model.ProductImages.Any())
+                            {
+                                foreach (var img in Model.ProductImages)
+                                {
+                                    <div class="img-edit-wrap" id="img-container-@img.Id" style="position:relative;">
+                                        <img src="@img.ImageUrl" class="img-prev" style="width:120px; height:120px; object-fit:cover; border-radius:8px; border:1px solid var(--border);" />
+                                        <button type="button" class="btn-del-mini" onclick="confirmDeleteImage(@img.Id)"
+                                                style="position:absolute; top:-5px; right:-5px; background:var(--danger); color:white; border:none; border-radius:50%; width:24px; height:24px; font-size:14px; cursor:pointer;">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted small italic">No images uploaded for this product yet.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="lx-card mb-4">
+                    <div class="lx-card-header"><div class="lx-card-title">Classification</div></div>
+                    <div class="lx-card-body">
+                        <label class="form-label">Update Category</label>
+                        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+                    </div>
+                </div>
+
+                <div class="lx-card">
+                    <div class="lx-card-header"><div class="lx-card-title">Add New Media</div></div>
+                    <div class="lx-card-body">
+                        <div class="upload-zone" onclick="document.getElementById('new-files').click()">
+                            <i class="bi bi-plus-circle-fill"></i>
+                            <p>Upload More Images</p>
+                            <input type="file" name="newImages" id="new-files" multiple class="d-none" onchange="previewImgs(event)" accept="image/*" />
+                        </div>
+                        <div id="img-preview" class="img-preview-grid mt-3"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-lx-gold w-100 py-3 mt-4">
+                    <i class="bi bi-cloud-check-fill me-2"></i>Update Product
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    <script>
+        function confirmDeleteImage(imgId) {
+            // SweetAlert Confirmation (Emerald & Gold Theme)
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This image will be permanently removed from the vault.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d4af37', // Gold
+                cancelButtonColor: '#004225',  // Emerald
+                confirmButtonText: 'Yes, delete it!',
+                background: '#081c15',
+                color: '#f8fafc'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    // The actual Fetch request happens only if they click 'Yes'
+                    fetch('/Admin/Products/DeleteImage?id=' + imgId, {
+                        method: 'POST',
+                        headers: {
+                            "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Network response was not ok');
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            //  Trigger the nice notification (make sure notify() is in site.js)
+                            if (typeof notify === "function") {
+                                notify('success', 'Deleted!', 'Image removed from vault.');
+                            } else {
+                                // Fallback if notify isn't global yet
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Asset Deleted',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    background: '#004225',
+                                    color: '#fff'
+                                });
+                            }
+
+                            // Smooth UI Removal
+                            const element = document.getElementById('img-container-' + imgId);
+                            if (element) {
+                                element.style.transition = "all 0.4s ease";
+                                element.style.opacity = "0";
+                                element.style.transform = "scale(0.8)";
+                                setTimeout(() => element.remove(), 400);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Error!', 'Could not delete the image.', 'error');
+                    });
+                }
+            });
+        }
+
+         let isDirty = false;
+
+        document.querySelectorAll('input, textarea, select').forEach(el => {
+            el.addEventListener('change', () => isDirty = true);
+        });
+
+        // If the user clicks a submit button, don't warn them
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                isDirty = false;
+            });
+        });
+
+        // Warning Logic
+        window.addEventListener('beforeunload', (e) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+}

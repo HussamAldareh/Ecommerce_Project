@@ -1,0 +1,79 @@
+﻿@model Ecommerce_Project.Models.Wishlist
+
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+
+<div class="container py-5">
+
+    <h1 class="text-warning fw-bold mb-5">
+        My Wishlist
+    </h1>
+
+    @if (Model == null || Model.WishlistItems == null || !Model.WishlistItems.Any())
+    {
+        <div class="alert alert-dark border border-warning text-white rounded-4 p-4">
+            Your wishlist is empty 🖤
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            @foreach (var item in Model.WishlistItems)
+            {
+                var image = item.Product.ProductImages?.FirstOrDefault();
+
+                <div class="col-lg-3 col-md-4 col-sm-6">
+
+                    <div class="card bg-dark text-white border border-warning rounded-4 h-100 shadow-lg overflow-hidden">
+
+                        @if (image != null)
+                        {
+                            <img src="@image.ImageUrl"
+                                 style="height:300px; object-fit:cover;" />
+                        }
+                        else
+                        {
+                            <img src="/images/no-image.png"
+                                 style="height:300px; object-fit:cover;" />
+                        }
+
+                        <div class="card-body d-flex flex-column">
+
+                            <h5 class="fw-bold">
+                                @item.Product.Name
+                            </h5>
+
+                            <p class="text-warning fs-4 fw-bold">
+                                @item.Product.Price JD
+                            </p>
+
+                            <div class="mt-auto d-flex gap-2">
+
+                                <a asp-controller="Products"
+                                   asp-action="Details"
+                                   asp-route-id="@item.Product.Id"
+                                   class="btn btn-warning w-100 fw-bold">
+                                    View
+                                </a>
+
+                                <a asp-action="RemoveFromWishlist"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-outline-danger">
+                                    ✕
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

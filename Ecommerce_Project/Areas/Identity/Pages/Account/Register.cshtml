@@ -1,0 +1,214 @@
+﻿@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<style>
+
+    body {
+        background: #081c15;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .register-wrapper {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 15px;
+    }
+
+    .register-card {
+        background: #10271f;
+        border-radius: 30px;
+        padding: 50px;
+        width: 100%;
+        max-width: 550px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        border: 1px solid rgba(212,175,55,0.15);
+    }
+
+    .register-title {
+        color: #d4af37;
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .register-subtitle {
+        color: #cfcfcf;
+        margin-bottom: 35px;
+    }
+
+    .form-control {
+        background: #081c15;
+        border: 1px solid rgba(212,175,55,0.2);
+        color: white;
+        border-radius: 15px;
+        height: 58px;
+    }
+
+        .form-control:focus {
+            background: #081c15;
+            color: white;
+            border-color: #d4af37;
+            box-shadow: none;
+        }
+
+    .form-floating label {
+        color: #aaa;
+    }
+
+    .register-btn {
+        background: #d4af37;
+        color: #081c15;
+        border: none;
+        border-radius: 50px;
+        height: 55px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .register-btn:hover {
+            background: #004225;
+            color: white;
+        }
+
+    .custom-link {
+        color: #d4af37;
+        text-decoration: none;
+    }
+
+        .custom-link:hover {
+            color: white;
+        }
+
+    .text-danger {
+        color: #ffb3b3 !important;
+    }
+
+</style>
+
+<div class="register-wrapper">
+
+    <div class="register-card">
+
+        <h1 class="register-title">
+            Create Account
+        </h1>
+
+        <p class="register-subtitle">
+            Join the luxury shopping experience
+        </p>
+
+        <form id="registerForm"
+              asp-route-returnUrl="@Model.ReturnUrl"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Input.FullName"
+                       class="form-control"
+                       placeholder="Full Name" />
+
+                <label asp-for="Input.FullName">
+                    Full Name
+                </label>
+
+                <span asp-validation-for="Input.FullName"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Input.Email"
+                       class="form-control"
+                       autocomplete="username"
+                       placeholder="name@example.com" />
+
+                <label asp-for="Input.Email">
+                    Email
+                </label>
+
+                <span asp-validation-for="Input.Email"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Input.Password"
+                       class="form-control"
+                       autocomplete="new-password"
+                       placeholder="password" />
+
+                <label asp-for="Input.Password">
+                    Password
+                </label>
+
+                <span asp-validation-for="Input.Password"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="form-floating mb-4">
+
+                <input asp-for="Input.ConfirmPassword"
+                       class="form-control"
+                       autocomplete="new-password"
+                       placeholder="password" />
+
+                <label asp-for="Input.ConfirmPassword">
+                    Confirm Password
+                </label>
+
+                <span asp-validation-for="Input.ConfirmPassword"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <button id="registerSubmit"
+                    type="submit"
+                    class="w-100 register-btn">
+
+                Register
+
+            </button>
+
+            <div class="text-center mt-4">
+
+                <p>
+
+                    Already have an account?
+
+                    <a asp-page="./Login"
+                       class="custom-link">
+
+                        Login
+
+                    </a>
+
+                </p>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

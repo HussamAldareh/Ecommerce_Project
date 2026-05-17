@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.Order>
+
+<div class="container mt-5">
+
+    <h2 class="text-success fw-bold mb-4">
+        My Orders
+    </h2>
+
+    @foreach (var order in Model)
+    {
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-body">
+
+                <h5 class="fw-bold">
+                    Order #@order.Id
+                </h5>
+
+                <p>
+                    Total:
+                    <span class="text-success fw-bold">
+                        @order.TotalAmount JD
+                    </span>
+                </p>
+
+                <p>
+                    Status:
+                    <span class="badge bg-success">
+                        @order.Status
+                    </span>
+                </p>
+
+                <p class="text-muted">
+                    @order.OrderDate
+                </p>
+
+            </div>
+
+        </div>
+    }
+
+</div>

@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Ecommerce_Project.Models.Testimonial>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Archived Testimonials";
+}
+
+<div class="lx-card shadow-sm border-0">
+    <div class="lx-card-header d-flex justify-content-between align-items-center">
+        <div class="lx-card-title text-danger">
+            <i class="bi bi-trash3-fill"></i> Testimonials Trash Archive
+        </div>
+        <a asp-area="Admin" asp-controller="Testimonials" asp-action="Index" class="btn-lx-outline">
+            <i class="bi bi-arrow-left"></i> Back to Queue
+        </a>
+    </div>
+
+    <div class="table-wrap">
+        <table class="lx-table">
+            <thead>
+                <tr>
+                    <th>User Account</th>
+                    <th>Archived Message</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-center text-muted p-4">The archive vault is completely empty.</td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr id="archive-row-@item.Id">
+                        <td>
+                            <div class="fw-bold">@(item.User?.FullName ?? "Anonymous User")</div>
+                            <div style="font-size:11px; color:var(--muted);">@item.User?.Email</div>
+                        </td>
+                        <td class="text-white" style="font-style: italic;">
+                            "@item.Message"
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-end">
+                                @* Reverse Soft Delete Button *@
+                                <button type="button" class="btn-icon view" onclick="restoreTestimonialItem(@item.Id, this)" title="Restore to Active List">
+                                    <i class="bi bi-arrow-counterclockwise" style="color:var(--success);"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function restoreTestimonialItem(id, element) {
+            try {
+                const response = await fetch(`/Admin/Testimonials/Restore?id=${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? ''
+                    }
+                });
+
+                if (!response.ok) throw new Error('Restoration failed');
+                const data = await response.json();
+
+                if (data.success) {
+                    const row = element.closest('tr');
+                    row.style.transition = "all 0.4s ease";
+                    row.style.opacity = "0";
+                    row.style.transform = "translateY(-10px)";
+
+                    setTimeout(() => row.remove(), 400);
+                    if (typeof notify === "function") notify('success', 'Archive Vault', 'Testimonial successfully restored.');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Could not restore this item.', 'error');
+            }
+        }
+    </script>
+}
