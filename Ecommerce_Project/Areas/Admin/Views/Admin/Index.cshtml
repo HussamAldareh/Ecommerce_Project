@@ -1,213 +1,398 @@
 ﻿@model IEnumerable<Ecommerce_Project.Models.Order>
+
 @{
     Layout = "_AdminLayout";
-    ViewData["PageTitle"] = "Dashboard";
-    ViewData["PageCrumb"] = "Admin / Dashboard";
+    ViewData["Title"] = "Dashboard";
+
     var revenue = ViewBag.RevenueData as decimal[] ?? new decimal[12];
-    var maxRevenue = revenue.Max() > 0 ? revenue.Max() : 1;
-    var currentMonth = DateTime.Now.Month;
-    var total = Model.Count() > 0 ? Model.Count() : 1;
+
+    var total = Model.Any() ? Model.Count() : 1;
+
     var completedPct = (Model.Count(o => o.Status == "Completed") * 100) / total;
     var processingPct = (Model.Count(o => o.Status == "Processing") * 100) / total;
     var cancelledPct = (Model.Count(o => o.Status == "Cancelled") * 100) / total;
-
 }
 
-<div id="page-dashboard" class="page-section active">
+<div class="row g-3 mb-4">
 
-    <div class="row g-3 mb-4">
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card">
-                <div class="stat-icon icon-blue"><i class="bi bi-people-fill"></i></div>
-                <div>
-                    <div class="stat-num">@ViewBag.customerCount</div>
-                    <div class="stat-lbl">Total Users</div>
-                    <div class="stat-delta delta-up"><i class="bi bi-arrow-up-short"></i>Active Members</div>
-                </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue">
+                <i class="bi bi-people-fill"></i>
             </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card">
-                <div class="stat-icon icon-gold"><i class="bi bi-box-seam-fill"></i></div>
-                <div>
-                    <div class="stat-num">@ViewBag.TotalProducts</div>
-                    <div class="stat-lbl">Total Products</div>
-                    <div class="stat-delta delta-up"><i class="bi bi-arrow-up-short"></i>In Catalogue</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card">
-                <div class="stat-icon icon-green"><i class="bi bi-tags-fill"></i></div>
-                <div>
-                    <div class="stat-num">@ViewBag.TotalCategories</div>
-                    <div class="stat-lbl">Categories</div>
-                    <div class="stat-delta delta-up"><i class="bi bi-arrow-up-short"></i>Active Groups</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="stat-card">
-                <div class="stat-icon icon-red"><i class="bi bi-receipt-cutoff"></i></div>
-                <div>
-                    <div class="stat-num">@ViewBag.TotalOrders</div>
-                    <div class="stat-lbl">Total Orders</div>
-                    <div class="stat-delta delta-down"><i class="bi bi-arrow-down-short"></i>Processed</div>
-                </div>
+
+            <div>
+                <div class="stat-num">@ViewBag.customerCount</div>
+                <div class="stat-lbl">Total Users</div>
             </div>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-lg-8">
-            <div class="lx-card h-100">
-                <div class="lx-card-header">
-                    <div class="lx-card-title"><i class="bi bi-bar-chart-line-fill"></i>Monthly Revenue</div>
-                </div>
-                <div class="lx-card-body">
-                    <div class="chart-bars">
-                        @for (int i = 0; i < 12; i++)
-                        {
-                            var height = (revenue[i] / maxRevenue) * 100;
-                            var isHighlight = (i + 1 == currentMonth);
-                            var monthName = new DateTime(2026, i + 1, 1).ToString("MMM");
-
-                            <div class="c-bar @(isHighlight ? "highlight" : "")"
-                                 style="height:@(height)%"
-                                 title="@monthName: @revenue[i].ToString("C0")"></div>
-                        }
-                    </div>
-                    <div class="chart-labels">
-                        @for (int i = 0; i < 12; i++)
-                        {
-                            <div class="c-label">@(new DateTime(2026, i + 1, 1).ToString("MMM"))</div>
-                        }
-                    </div>
-                </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-gold">
+                <i class="bi bi-box-seam-fill"></i>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="lx-card h-100">
-                <div class="lx-card-header"><div class="lx-card-title"><i class="bi bi-pie-chart-fill"></i>Orders by Status</div></div>
-                <div class="lx-card-body">
-                    <div style="display:flex;flex-direction:column;gap:14px">
 
-                        <div>
-                            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
-                                <span style="display:flex;align-items:center;gap:5px">
-                                    <i class="bi bi-check-circle-fill" style="color:var(--success)"></i>Completed
-                                </span>
-                                <strong>@completedPct%</strong>
-                            </div>
-                            <div style="height:8px;background:var(--border);border-radius:4px">
-                                <div style="width:@completedPct%;height:100%;background:var(--success);border-radius:4px"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
-                                <span style="display:flex;align-items:center;gap:5px">
-                                    <i class="bi bi-hourglass-split" style="color:var(--gold)"></i>Processing
-                                </span>
-                                <strong>@processingPct%</strong>
-                            </div>
-                            <div style="height:8px;background:var(--border);border-radius:4px">
-                                <div style="width:@processingPct%;height:100%;background:var(--gold);border-radius:4px"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
-                                <span style="display:flex;align-items:center;gap:5px">
-                                    <i class="bi bi-x-circle-fill" style="color:var(--danger)"></i>Cancelled
-                                </span>
-                                <strong>@cancelledPct%</strong>
-                            </div>
-                            <div style="height:8px;background:var(--border);border-radius:4px">
-                                <div style="width:@cancelledPct%;height:100%;background:var(--danger);border-radius:4px"></div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+            <div>
+                <div class="stat-num">@ViewBag.TotalProducts</div>
+                <div class="stat-lbl">Products</div>
             </div>
         </div>
     </div>
 
-    <div class="row g-3">
-        <div class="col-lg-7">
-            <div class="lx-card">
-                <div class="lx-card-header">
-                    <div class="lx-card-title"><i class="bi bi-clock-history"></i>Recent Orders</div>
-                    <a asp-controller="Orders" asp-action="Index" class="btn-lx-outline">
-                        View All <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-                <div class="table-wrap">
-                    <table class="lx-table">
-                        <thead>
-                            <tr>
-                                <th>#Order</th>
-                                <th>Customer</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var order in Model)
-                            {
-                                <tr>
-                                    <td><strong>#ORD-@order.Id</strong></td>
-                                    <td>
-                                        <div class="td-name">@order.User?.FullName</div>
-                                        <div class="td-sub">@order.User?.Email</div>
-                                    </td>
-                                    <td><strong>@order.TotalAmount.ToString("C")</strong></td>
-                                    <td>
-                                        <span class="lx-badge @(order.Status == "Completed" ? "b-success" : "b-warning")">
-                                            <i class="bi @(order.Status == "Completed" ? "bi-check-circle-fill" : "bi-hourglass-split")"></i>
-                                            @order.Status
-                                        </span>
-                                    </td>
-                                    <td style="font-size:12px;color:var(--muted)">@order.OrderDate.ToShortDateString()</td>
-                                    <td>
-                                        <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id" class="btn-icon view">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-green">
+                <i class="bi bi-tags-fill"></i>
             </div>
-        </div>
 
-        <div class="col-lg-5">
-            <div class="lx-card h-100">
-                <div class="lx-card-header"><div class="lx-card-title"><i class="bi bi-activity"></i>Recent Activity</div></div>
-                <div class="lx-card-body p-0" style="padding:4px 20px 20px !important">
-                    @foreach (var order in Model.Take(3))
-                    {
-                        <div class="activity-item">
-                            <div class="a-dot" style="background:var(--success)"></div>
-                            <div>
-                                <div style="font-size:13px">New order <strong>#ORD-@order.Id</strong> placed by @order.User?.FullName</div>
-                                <div class="a-time"><i class="bi bi-clock"></i> @order.OrderDate.ToShortDateString()</div>
-                            </div>
-                        </div>
-                    }
-                    <div class="activity-item">
-                        <div class="a-dot" style="background:var(--info)"></div>
-                        <div>
-                            <div style="font-size:13px">System sync complete</div>
-                            <div class="a-time"><i class="bi bi-clock"></i> Just now</div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <div class="stat-num">@ViewBag.TotalCategories</div>
+                <div class="stat-lbl">Categories</div>
             </div>
         </div>
     </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-red">
+                <i class="bi bi-receipt-cutoff"></i>
+            </div>
+
+            <div>
+                <div class="stat-num">@ViewBag.TotalOrders</div>
+                <div class="stat-lbl">Orders</div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<div class="row g-3 mb-4">
+
+    <!-- CHART -->
+    <div class="col-lg-8">
+
+        <div class="lx-card h-100">
+
+            <div class="lx-card-header">
+                <div class="lx-card-title">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    Monthly Revenue
+                </div>
+            </div>
+
+            <div class="lx-card-body">
+
+                <canvas id="revenueChart" height="120"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- STATUS -->
+    <div class="col-lg-4">
+
+        <div class="lx-card h-100">
+
+            <div class="lx-card-header">
+                <div class="lx-card-title">
+                    <i class="bi bi-pie-chart-fill"></i>
+                    Orders by Status
+                </div>
+            </div>
+
+            <div class="lx-card-body">
+
+                <div class="mb-4">
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Completed</span>
+                        <strong>@completedPct%</strong>
+                    </div>
+
+                    <div class="progress" style="height:8px;">
+                        <div class="progress-bar bg-success"
+                             style="width:@completedPct%">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Processing</span>
+                        <strong>@processingPct%</strong>
+                    </div>
+
+                    <div class="progress" style="height:8px;">
+                        <div class="progress-bar bg-warning"
+                             style="width:@processingPct%">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Cancelled</span>
+                        <strong>@cancelledPct%</strong>
+                    </div>
+
+                    <div class="progress" style="height:8px;">
+                        <div class="progress-bar bg-danger"
+                             style="width:@cancelledPct%">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row g-3">
+
+    <!-- ORDERS -->
+    <div class="col-lg-7">
+
+        <div class="lx-card">
+
+            <div class="lx-card-header">
+
+                <div class="lx-card-title">
+                    <i class="bi bi-clock-history"></i>
+                    Recent Orders
+                </div>
+
+                <a asp-controller="Orders"
+                   asp-action="Index"
+                   class="btn-lx-outline">
+
+                    View All
+                </a>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table class="lx-table">
+
+                    <thead>
+                        <tr>
+                            <th>#Order</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var order in Model.Take(5))
+                        {
+                            <tr>
+
+                                <td>
+                                    <strong>#ORD-@order.Id</strong>
+                                </td>
+
+                                <td>
+                                    <div>@order.User?.FullName</div>
+                                    <small>@order.User?.Email</small>
+                                </td>
+
+                                <td>
+                                    @order.TotalAmount.ToString("C")
+                                </td>
+
+                                <td>
+
+                                    <span class="badge @(order.Status == "Completed"
+                                                                                      ? "bg-success"
+                                                                                      : order.Status == "Cancelled"
+                                                                                      ? "bg-danger"
+                                                                                      : "bg-warning")">
+
+                                    @order.Status
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    @order.OrderDate.ToShortDateString()
+                                </td>
+
+                                <td>
+
+                                    <a asp-controller="Orders"
+                                       asp-action="Details"
+                                       asp-route-id="@order.Id"
+                                       class="btn btn-sm btn-dark">
+
+                                        <i class="bi bi-eye-fill"></i>
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                                                }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="col-lg-5">
+
+        <div class="lx-card h-100">
+
+            <div class="lx-card-header">
+
+                <div class="lx-card-title">
+                    <i class="bi bi-activity"></i>
+                    Recent Activity
+                </div>
+
+            </div>
+
+            <div class="lx-card-body">
+
+                @foreach (var order in Model.Take(3))
+                {
+                    <div class="mb-3 pb-3 border-bottom">
+
+                        <div>
+                            New Order
+                            <strong>#ORD-@order.Id</strong>
+                        </div>
+
+                        <small class="text-muted">
+                            @order.User?.FullName -
+                            @order.OrderDate.ToShortDateString()
+                        </small>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <!-- CHART JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        const revenueData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(revenue));
+
+        const ctx = document.getElementById('revenueChart');
+
+        if (ctx) {
+
+            new Chart(ctx, {
+
+                type: 'line',
+
+                data: {
+
+                    labels: [
+                        'Jan', 'Feb', 'Mar', 'Apr',
+                        'May', 'Jun', 'Jul', 'Aug',
+                        'Sep', 'Oct', 'Nov', 'Dec'
+                    ],
+
+                    datasets: [{
+
+                        label: 'Revenue',
+
+                        data: revenueData,
+
+                        borderColor: '#d4af37',
+
+                        backgroundColor: 'rgba(212,175,55,0.2)',
+
+                        fill: true,
+
+                        tension: 0.4
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    plugins: {
+
+                        legend: {
+
+                            labels: {
+
+                                color: '#ffffff'
+
+                            }
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+
+                                color: '#ffffff'
+
+                            }
+
+                        },
+
+                        y: {
+
+                            ticks: {
+
+                                color: '#ffffff'
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+    </script>
+
+}

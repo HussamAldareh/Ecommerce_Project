@@ -272,7 +272,7 @@ namespace Ecommerce_Project.Controllers
                     Quantity = item.Quantity,
                     Price = finalPrice
                 };
-
+                  
                 _context.orderItems.Add(orderItem);
             }
 

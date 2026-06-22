@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace Ecommerce_Project.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class TestimonialsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,11 +22,13 @@ namespace Ecommerce_Project.Controllers
         }
 
         // GET: Testimonials
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.testimonials.Include(t => t.User);
             return View(await applicationDbContext.ToListAsync());
         }
+        [Authorize]
 
         // GET: Testimonials/Details/5
         [AllowAnonymous]
@@ -97,6 +98,8 @@ namespace Ecommerce_Project.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles ="Admin")]
+
         public async Task<IActionResult> Edit(int id, [Bind("Id,Message,IsApproved,CreatedAt,UserId")] Testimonial testimonial)
         {
             if (id != testimonial.Id)
@@ -129,6 +132,8 @@ namespace Ecommerce_Project.Controllers
         }
 
         // GET: Testimonials/Delete/5
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -150,6 +155,8 @@ namespace Ecommerce_Project.Controllers
         // POST: Testimonials/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var testimonial = await _context.testimonials.FindAsync(id);
@@ -163,6 +170,7 @@ namespace Ecommerce_Project.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public async Task<IActionResult> Approve(int id)
@@ -185,7 +193,7 @@ namespace Ecommerce_Project.Controllers
 
 
 
-
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         public async Task<IActionResult> Reject(int id)
         {

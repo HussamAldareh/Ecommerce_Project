@@ -1,7 +1,6 @@
 ﻿
-```javascript id="q9tp2m"
 console.log("ADMIN JS LOADED");
-```
+
     
 
 /* ── LUXORA CORE CONFIGURATION ────────────────────── */
@@ -128,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 datasets: [{
                     label: 'Revenue',
-                    data: [1200, 2100, 1800, 3200, 4200, 5100],
+                    data: revenueData,
                     borderColor: '#d4af37',
                     backgroundColor: 'rgba(212,175,55,.15)',
                     fill: true,
@@ -161,3 +160,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+
+console.log("ADMIN JS WORKING");

@@ -222,8 +222,9 @@ namespace Ecommerce_Project.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Product added to cart successfully";
 
-            return RedirectToAction("Index", "Products");
+            return RedirectToAction("Details", "Products", new { id = productId });
         }
 
 
