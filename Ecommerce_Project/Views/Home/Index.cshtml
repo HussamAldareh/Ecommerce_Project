@@ -1,7 +1,10 @@
 ﻿@model IEnumerable<Ecommerce_Project.Models.Product>
+@using Ecommerce_Project.Models
 
 @{
     ViewData["Title"] = "Home";
+
+    var testimonials = ViewBag.Testimonials as List<Testimonial>;
 }
 
 <style>
@@ -16,84 +19,46 @@
         text-decoration: none;
     }
 
-    /* NAVBAR */
-
-    .lux-navbar {
-        background: rgba(8, 28, 21, 0.95);
-        border-bottom: 1px solid rgba(212,175,55,0.15);
-        padding: 18px 0;
-    }
-
-    .brand-logo {
-        font-size: 34px;
-        font-weight: bold;
-        color: #d4af37;
-        letter-spacing: 3px;
-    }
-
-    .nav-link-custom {
-        color: white;
-        margin-left: 25px;
-        font-weight: 500;
-        transition: 0.3s;
-    }
-
-        .nav-link-custom:hover {
-            color: #d4af37;
-        }
-
-    .cart-btn {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #d4af37;
-        color: #081c15;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        transition: 0.3s;
-    }
-
-        .cart-btn:hover {
-            background: #004225;
-            color: white;
-        }
-
     /* HERO */
 
     .hero-section {
-        min-height: 92vh;
-        background: linear-gradient(to right, rgba(8,28,21,0.92), rgba(8,28,21,0.45)), url('/images/hero.jpg');
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        padding: 90px;
+        width: 100%;
+        min-height: 100vh;
+        padding: 0;
     }
 
-    .hero-subtitle {
-        color: #d4af37;
-        letter-spacing: 4px;
-        font-size: 18px;
-        margin-bottom: 20px;
+    .hero-overlay {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-content {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        width: 100%;
     }
 
     .hero-title {
-        font-size: 90px;
+        color: white;
+        font-size: 55px;
         font-weight: 800;
-        line-height: 1;
-    }
-
-    .hero-text {
-        margin-top: 25px;
-        color: #cfcfcf;
-        font-size: 20px;
-        max-width: 600px;
+        margin-bottom: 25px;
+        text-shadow: 0 5px 20px rgba(0,0,0,0.6);
     }
 
     .hero-btn {
-        margin-top: 35px;
         background: #d4af37;
         color: #081c15;
         padding: 15px 45px;
@@ -101,12 +66,16 @@
         font-weight: bold;
         transition: 0.3s;
         display: inline-block;
+        font-size: 18px;
+        width: 220px;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
 
         .hero-btn:hover {
             background: #004225;
             color: white;
-            transform: translateY(-3px);
+            transform: translateY(-5px);
         }
 
     /* SECTION */
@@ -128,7 +97,12 @@
         height: 420px;
         cursor: pointer;
         box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        transition: 0.4s;
     }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+        }
 
         .category-card img {
             width: 100%;
@@ -157,46 +131,47 @@
             color: #d4af37;
         }
 
-    /* PRODUCT CARD */
+    /* PRODUCT */
 
     .product-card {
         background: #10271f;
-        border-radius: 24px;
+        border-radius: 20px;
         overflow: hidden;
         transition: 0.35s;
         border: 1px solid rgba(212,175,55,0.15);
-        height: 100%;
         box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+        height: 100%;
     }
 
         .product-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-10px) scale(1.02);
         }
 
         .product-card img {
-            height: 320px;
+            height: 240px;
             width: 100%;
             object-fit: cover;
         }
 
     .product-content {
-        padding: 25px;
+        padding: 18px;
     }
 
     .product-name {
-        font-size: 22px;
+        font-size: 18px;
         font-weight: bold;
         color: white;
     }
 
     .product-description {
         color: #cfcfcf;
-        min-height: 50px;
+        min-height: 45px;
+        font-size: 14px;
     }
 
     .product-price {
         color: #d4af37;
-        font-size: 26px;
+        font-size: 20px;
         font-weight: bold;
     }
 
@@ -204,7 +179,7 @@
         background: #d4af37;
         color: #081c15;
         border-radius: 50px;
-        padding: 10px 22px;
+        padding: 8px 18px;
         font-weight: bold;
         transition: 0.3s;
         border: none;
@@ -215,40 +190,113 @@
             color: white;
         }
 
+    /* TESTIMONIALS */
+
+    .testimonial-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .testimonial-slider {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding-bottom: 10px;
+    }
+
+        .testimonial-slider::-webkit-scrollbar {
+            display: none;
+        }
+
+    .testimonial-card {
+        min-width: 350px;
+        background: #10271f;
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid rgba(212,175,55,0.15);
+        flex-shrink: 0;
+    }
+
+    .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #d4af37;
+        color: #081c15;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        font-size: 22px;
+        cursor: pointer;
+        z-index: 10;
+        transition: 0.3s;
+    }
+
+        .slider-btn:hover {
+            background: white;
+        }
+
+    .prev-btn {
+        left: -10px;
+    }
+
+    .next-btn {
+        right: -10px;
+    }
+
+    textarea:focus {
+        box-shadow: none !important;
+        border-color: #d4af37 !important;
+        background: #081c15 !important;
+        color: white !important;
+    }
+
     footer {
         margin-top: 120px;
         background: #04110d;
         padding: 70px 0;
     }
 
-</style>
+    @@media(max-width:768px) {
 
-<!-- NAVBAR -->
+        .hero-title {
+            font-size: 35px;
+        }
+
+        .section-title {
+            font-size: 35px;
+        }
+
+        .testimonial-card {
+            min-width: 280px;
+        }
+
+        .category-card {
+            height: 320px;
+        }
+    }
+
+</style>
 
 <!-- HERO -->
 
 <section class="hero-section">
 
-    <div>
+    <div class="hero-overlay">
 
-        <p class="hero-subtitle">
-            LUXURY COLLECTION
-        </p>
+        <img src="/images/ChatGPT Image 18 مايو 2026، 01_32_05 م.png"
+             class="hero-image" />
 
-        <h1 class="hero-title">
-            Timeless <br />
-            Elegance
-        </h1>
+        <div class="hero-content">
 
-        <p class="hero-text">
-            Discover luxury watches and handbags
-            crafted for premium lifestyle and elegance.
-        </p>
+            <a href="#products"
+               class="hero-btn">
+                SHOP NOW
+            </a>
 
-        <a href="#products"
-           class="hero-btn">
-            SHOP NOW
-        </a>
+        </div>
 
     </div>
 
@@ -264,8 +312,6 @@
 
     <div class="row g-4">
 
-        <!-- Watch -->
-
         <div class="col-md-6">
 
             <a asp-controller="Products"
@@ -278,13 +324,9 @@
 
                     <div class="category-overlay">
 
-                        <h2>
-                            Luxury Watch
-                        </h2>
+                        <h2>Luxury Watch</h2>
 
-                        <p>
-                            Crafted for luxury lifestyle
-                        </p>
+                        <p>Crafted for luxury lifestyle</p>
 
                     </div>
 
@@ -293,8 +335,6 @@
             </a>
 
         </div>
-
-        <!-- Bags -->
 
         <div class="col-md-6">
 
@@ -308,13 +348,9 @@
 
                     <div class="category-overlay">
 
-                        <h2>
-                            Elegant Bags
-                        </h2>
+                        <h2>Elegant Bags</h2>
 
-                        <p>
-                            Explore premium timepieces
-                        </p>
+                        <p>Explore premium collections</p>
 
                     </div>
 
@@ -326,9 +362,13 @@
 
     </div>
 
+</section>
 
+<!-- OFFERS -->
 
-    <div class="col-md-12" >
+<section class="container mt-5">
+
+    <div class="col-md-12">
 
         <a asp-controller="Products"
            asp-action="Offers">
@@ -340,13 +380,9 @@
 
                 <div class="category-overlay">
 
-                    <h2>
-                        Exclusive Offers
-                    </h2>
+                    <h2>Exclusive Offers</h2>
 
-                    <p>
-                        Discover premium discounts
-                    </p>
+                    <p>Discover premium discounts</p>
 
                 </div>
 
@@ -355,11 +391,6 @@
         </a>
 
     </div>
-
-
-
-
-
 
 </section>
 
@@ -405,7 +436,7 @@
 
                     </p>
 
-                        <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="d-flex justify-content-between align-items-center mt-3">
 
                             <span class="product-price">
                                 @item.Price JD
@@ -431,14 +462,7 @@
 
 </section>
 
-
-
-@using Ecommerce_Project.Models
-
-@{
-    var testimonials = ViewBag.Testimonials as List<Testimonial>;
-}
-
+<!-- TESTIMONIALS -->
 @if (testimonials != null && testimonials.Any())
 {
     <section class="container mt-5">
@@ -447,13 +471,18 @@
             What Our Clients Say
         </h2>
 
-        <div class="row g-4">
+        <div class="testimonial-wrapper">
 
-            @foreach (var item in testimonials)
-            {
-                <div class="col-md-4">
+            <button class="slider-btn prev-btn">
+                ‹
+            </button>
 
-                    <div class="product-card p-4 h-100">
+            <div class="testimonial-slider"
+                 id="testimonialSlider">
+
+                @foreach (var item in testimonials)
+                {
+                    <div class="testimonial-card">
 
                         <div class="d-flex align-items-center mb-3">
 
@@ -489,24 +518,29 @@
 
                         <p class="text-light mb-0"
                            style="line-height:1.8;">
+
                             "@item.Message"
+
                         </p>
 
                     </div>
+                }
 
-                </div>
-            }
+            </div>
+
+            <button class="slider-btn next-btn">
+                ›
+            </button>
 
         </div>
 
     </section>
 }
 
-
-
+<!-- ADD TESTIMONIAL -->
 @if (User.Identity.IsAuthenticated)
 {
-    <section class="container mt-5">
+    <section class="container mt-5 mb-5">
 
         <div class="product-card p-5">
 
@@ -519,10 +553,10 @@
                   method="post">
 
                 <textarea name="Message"
-                          class="form-control mb-4"
-                          rows="5"
-                          placeholder="Write your opinion about our website..."
-                          style="
+                      class="form-control mb-4"
+                      rows="5"
+                      placeholder="Write your opinion about our website..."
+                      style="
                               background:#081c15;
                               border:1px solid rgba(212,175,55,0.2);
                               color:white;
@@ -541,9 +575,52 @@
     </section>
 }
 
+<script>
 
+    const slider = document.getElementById("testimonialSlider");
 
+    const nextBtn = document.querySelector(".next-btn");
+    const prevBtn = document.querySelector(".prev-btn");
 
+    nextBtn.addEventListener("click", () => {
 
-<!-- FOOTER -->
+        slider.scrollBy({
+            left: 370,
+            behavior: "smooth"
+        });
 
+    });
+
+    prevBtn.addEventListener("click", () => {
+
+        slider.scrollBy({
+            left: -370,
+            behavior: "smooth"
+        });
+
+    });
+
+    // AUTO SLIDE
+
+    setInterval(() => {
+
+        if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10) {
+
+            slider.scrollTo({
+                left: 0,
+                behavior: "smooth"
+            });
+
+        }
+        else {
+
+            slider.scrollBy({
+                left: 370,
+                behavior: "smooth"
+            });
+
+        }
+
+    }, 4000);
+
+</script>
